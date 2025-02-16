@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace PhpList\Core\Domain\Model\Identity;
 
-use Doctrine\ORM\Mapping;
-use Doctrine\ORM\Mapping\Column;
+use DateTime;
+use Doctrine\ORM\Mapping as ORM;
 use PhpList\Core\Domain\Model\Interfaces\CreationDate;
 use PhpList\Core\Domain\Model\Interfaces\DomainModel;
 use PhpList\Core\Domain\Model\Interfaces\Identity;
@@ -12,179 +13,145 @@ use PhpList\Core\Domain\Model\Interfaces\ModificationDate;
 use PhpList\Core\Domain\Model\Traits\CreationDateTrait;
 use PhpList\Core\Domain\Model\Traits\IdentityTrait;
 use PhpList\Core\Domain\Model\Traits\ModificationDateTrait;
+use PhpList\Core\Domain\Repository\Identity\AdministratorRepository;
 
 /**
  * This class represents an administrator who can log to the system, is allowed to administer
  * selected lists (as the owner), send campaigns to these lists and edit subscribers.
  *
- * @Mapping\Entity(repositoryClass="PhpList\Core\Domain\Repository\Identity\AdministratorRepository")
- * @Mapping\Table(name="phplist_admin")
- * @Mapping\HasLifecycleCallbacks
- *
  * @author Oliver Klee <oliver@phplist.com>
  */
+#[ORM\Entity(repositoryClass: AdministratorRepository::class)]
+#[ORM\Table(name: 'phplist_admin')]
+#[ORM\HasLifecycleCallbacks]
 class Administrator implements DomainModel, Identity, CreationDate, ModificationDate
 {
     use IdentityTrait;
     use CreationDateTrait;
     use ModificationDateTrait;
 
-    /**
-     * @var string
-     * @Column(name="loginname")
-     */
-    private $loginName = '';
+    #[ORM\Column(name: 'loginname')]
+    private string $loginName;
 
-    /**
-     * @var string
-     * @Column(name="email")
-     */
-    private $emailAddress = '';
+    #[ORM\Column(name: 'namelc', nullable: true)]
+    private string $namelc;
 
-    /**
-     * @var \DateTime|null
-     * @Column(type="datetime", name="created")
-     */
-    protected $creationDate = null;
+    #[ORM\Column(name: 'email')]
+    private string $emailAddress;
 
-    /**
-     * @var \DateTime|null
-     * @Column(type="datetime", name="modified")
-     */
-    protected $modificationDate = null;
+    #[ORM\Column(name: 'created', type: 'datetime')]
+    protected ?DateTime $creationDate = null;
 
-    /**
-     * @var string
-     * @Column(name="password")
-     */
-    private $passwordHash = '';
+    #[ORM\Column(name: 'modified', type: 'datetime')]
+    protected ?DateTime $modificationDate;
 
-    /**
-     * @var \DateTime|null
-     * @Column(type="date", nullable=true, name="passwordchanged")
-     */
-    private $passwordChangeDate = null;
+    #[ORM\Column(name: 'modifiedby', type: 'string', length: 66, nullable: true)]
+    protected ?string $modifiedBy;
 
-    /**
-     * @var bool
-     * @Column(type="boolean")
-     */
-    private $disabled = false;
+    #[ORM\Column(name: 'password')]
+    private string $passwordHash;
 
-    /**
-     * @var bool
-     * @Column(type="boolean", name="superuser")
-     */
-    private $superUser = false;
+    #[ORM\Column(name: 'passwordchanged', type: 'date', nullable: true)]
+    private ?DateTime $passwordChangeDate;
 
-    /**
-     * @return string
-     */
+    #[ORM\Column(type: 'boolean')]
+    private bool $disabled;
+
+    #[ORM\Column(name: 'superuser', type: 'boolean')]
+    private bool $superUser;
+
+    #[ORM\Column(name: 'privileges', type: 'text', nullable: true)]
+    private ?string $privileges;
+
+    public function __construct()
+    {
+        $this->disabled = false;
+        $this->superUser = false;
+        $this->passwordChangeDate = null;
+        $this->loginName = '';
+        $this->passwordHash = '';
+        $this->modificationDate = null;
+        $this->emailAddress = '';
+    }
+
     public function getLoginName(): string
     {
         return $this->loginName;
     }
 
-    /**
-     * @param string $loginName
-     *
-     * @return void
-     */
-    public function setLoginName(string $loginName)
+    public function setLoginName(string $loginName): void
     {
         $this->loginName = $loginName;
     }
 
-    /**
-     * @return string
-     */
     public function getEmailAddress(): string
     {
         return $this->emailAddress;
     }
 
-    /**
-     * @param string $emailAddress
-     *
-     * @return void
-     */
-    public function setEmailAddress(string $emailAddress)
+    public function setEmailAddress(string $emailAddress): void
     {
         $this->emailAddress = $emailAddress;
     }
 
-    /**
-     * @return string
-     */
     public function getPasswordHash(): string
     {
         return $this->passwordHash;
     }
 
-    /**
-     * Sets the password hash and updates the password change date to now.
-     *
-     * @param string $passwordHash
-     *
-     * @return void
-     */
-    public function setPasswordHash(string $passwordHash)
+    public function setPasswordHash(string $passwordHash): void
     {
         $this->passwordHash = $passwordHash;
-        $this->setPasswordChangeDate(new \DateTime());
+        $this->setPasswordChangeDate(new DateTime());
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getPasswordChangeDate()
+    public function getPasswordChangeDate(): ?DateTime
     {
         return $this->passwordChangeDate;
     }
 
-    /**
-     * @param \DateTime $changeDate
-     *
-     * @return void
-     */
-    private function setPasswordChangeDate(\DateTime $changeDate)
+    private function setPasswordChangeDate(DateTime $changeDate): void
     {
         $this->passwordChangeDate = $changeDate;
     }
 
-    /**
-     * @return bool
-     */
     public function isDisabled(): bool
     {
         return $this->disabled;
     }
 
-    /**
-     * @param bool $disabled
-     *
-     * @return void
-     */
-    public function setDisabled(bool $disabled)
+    public function setDisabled(bool $disabled): void
     {
         $this->disabled = $disabled;
     }
 
-    /**
-     * @return bool
-     */
     public function isSuperUser(): bool
     {
         return $this->superUser;
     }
 
-    /**
-     * @param bool $superUser
-     *
-     * @return void
-     */
-    public function setSuperUser(bool $superUser)
+    public function setSuperUser(bool $superUser): void
     {
         $this->superUser = $superUser;
+    }
+
+    public function setNameLc(string $nameLc): void
+    {
+        $this->namelc = $nameLc;
+    }
+
+    public function getNameLc(): string
+    {
+        return $this->namelc;
+    }
+
+    public function setPrivileges(string $privileges): void
+    {
+        $this->privileges = $privileges;
+    }
+
+    public function getPrivileges(): string
+    {
+        return $this->privileges;
     }
 }
