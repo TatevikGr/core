@@ -15,7 +15,7 @@ use PhpList\Core\Domain\Model\Traits\IdentityTrait;
 class TemplateImage implements DomainModel, Identity
 {
     use IdentityTrait;
-    #[ORM\ManyToOne(targetEntity: Template::class)]
+    #[ORM\ManyToOne(targetEntity: Template::class, inversedBy: 'images')]
     #[ORM\JoinColumn(name: 'template', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private Template $template;
 

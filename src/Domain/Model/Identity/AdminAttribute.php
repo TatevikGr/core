@@ -11,7 +11,7 @@ use PhpList\Core\Domain\Model\Traits\IdentityTrait;
 use PhpList\Core\Domain\Repository\Identity\AdminAttributeRepository;
 
 #[ORM\Entity(repositoryClass: AdminAttributeRepository::class)]
-#[ORM\Table(name: 'phplist_admin_attribute')]
+#[ORM\Table(name: 'phplist_adminattribute')]
 #[ORM\HasLifecycleCallbacks]
 class AdminAttribute implements DomainModel, Identity
 {
