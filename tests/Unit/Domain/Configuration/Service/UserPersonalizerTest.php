@@ -81,17 +81,19 @@ final class UserPersonalizerTest extends TestCase
             ->willReturn($subscriber);
 
         // Config values for URLs + domain/website + subscribe url
-        $this->config->method('getValue')->willReturnCallback(function ($opt) {
-            return match ($opt) {
-                ConfigOption::UnsubscribeUrl => 'https://u.example/unsub',
-                ConfigOption::ConfirmationUrl => 'https://u.example/confirm',
-                ConfigOption::PreferencesUrl => 'https://u.example/prefs',
-                ConfigOption::SubscribeUrl => 'https://u.example/subscribe',
-                ConfigOption::Domain => 'example.org',
-                ConfigOption::Website => 'site.example.org',
-                default => null,
-            };
-        });
+        $this->config->method('getValue')->willReturnCallback(
+            function ($opt) {
+                return match ($opt) {
+                    ConfigOption::UnsubscribeUrl => 'https://u.example/unsub',
+                    ConfigOption::ConfirmationUrl => 'https://u.example/confirm',
+                    ConfigOption::PreferencesUrl => 'https://u.example/prefs',
+                    ConfigOption::SubscribeUrl => 'https://u.example/subscribe',
+                    ConfigOption::Domain => 'example.org',
+                    ConfigOption::Website => 'site.example.org',
+                    default => null,
+                };
+            }
+        );
 
         $this->attrRepo
             ->expects($this->once())
@@ -135,14 +137,16 @@ final class UserPersonalizerTest extends TestCase
             ->willReturn($subscriber);
 
         // Only needed so registration for URL placeholders doesn't blow up; values don't matter in this test
-        $this->config->method('getValue')->willReturnMap([
+        $this->config->method('getValue')->willReturnMap(
+            [
             [ConfigOption::UnsubscribeUrl, ''],
             [ConfigOption::ConfirmationUrl, ''],
             [ConfigOption::PreferencesUrl, ''],
             [ConfigOption::SubscribeUrl, ''],
             [ConfigOption::Domain, 'example.org'],
             [ConfigOption::Website, 'site.example.org'],
-        ]);
+            ]
+        );
 
         // Build a fake attribute value entity with definition NAME => "Full Name"
         $attrDefinition = $this->createMock(SubscriberAttributeDefinition::class);
@@ -180,14 +184,16 @@ final class UserPersonalizerTest extends TestCase
 
         $this->subRepo->method('findOneByEmail')->willReturn($subscriber);
 
-        $this->config->method('getValue')->willReturnMap([
+        $this->config->method('getValue')->willReturnMap(
+            [
             [ConfigOption::UnsubscribeUrl, 'https://x/unsub'],
             [ConfigOption::ConfirmationUrl, 'https://x/conf'],
             [ConfigOption::PreferencesUrl, 'https://x/prefs'],
             [ConfigOption::SubscribeUrl, 'https://x/sub'],
             [ConfigOption::Domain, 'x.tld'],
             [ConfigOption::Website, 'w.x.tld'],
-        ]);
+            ]
+        );
 
         // Two attributes: FOO & BAR
         $defFoo = $this->createMock(SubscriberAttributeDefinition::class);
@@ -204,10 +210,12 @@ final class UserPersonalizerTest extends TestCase
 
         $this->attrResolver
             ->method('resolve')
-            ->willReturnMap([
+            ->willReturnMap(
+                [
                 [$valFoo, 'FVAL'],
                 [$valBar, 'BVAL'],
-            ]);
+                ]
+            );
 
         $input = '[foo][BAR]-[email]-[UNSUBSCRIBEURL]';
         $out = $this->personalizer->personalize($input, $email, OutputFormat::Text);

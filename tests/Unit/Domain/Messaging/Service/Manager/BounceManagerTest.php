@@ -192,11 +192,13 @@ class BounceManagerTest extends TestCase
     {
         $this->logger->expects($this->exactly(2))
             ->method('info')
-            ->withConsecutive([
+            ->withConsecutive(
+                [
                 'Running in test mode, not deleting messages from mailbox'
-            ], [
+                ], [
                 'Processed messages will be deleted from the mailbox'
-            ]);
+                ]
+            );
 
         $this->manager->announceDeletionMode(true);
         $this->manager->announceDeletionMode(false);

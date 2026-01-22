@@ -61,7 +61,9 @@ class SubscriberRepositoryTest extends KernelTestCase
         $modificationDate = new DateTime('2016-08-23 19:50:43');
         $extraData = 'This is one of our favourite subscribers.';
 
-        /** @var Subscriber $model */
+        /**
+ * @var Subscriber $model 
+*/
         $model = $this->subscriberRepository->find($id);
 
         self::assertSame($id, $model->getId());
@@ -112,7 +114,9 @@ class SubscriberRepositoryTest extends KernelTestCase
     {
         $this->loadFixtures([SubscriberFixture::class]);
 
-        /** @var Subscriber $model */
+        /**
+ * @var Subscriber $model 
+*/
         $model = $this->subscriberRepository->find(1);
 
         $otherModel = new Subscriber();
@@ -141,7 +145,9 @@ class SubscriberRepositoryTest extends KernelTestCase
     {
         $this->loadFixtures([SubscriberFixture::class]);
 
-        /** @var Subscriber $model */
+        /**
+ * @var Subscriber $model 
+*/
         $model = $this->subscriberRepository->find(1);
         $oldUniqueId = $model->getUniqueId();
 
@@ -157,7 +163,9 @@ class SubscriberRepositoryTest extends KernelTestCase
 
         $this->loadFixtures([SubscriberFixture::class]);
 
-        /** @var Subscriber $model */
+        /**
+ * @var Subscriber $model 
+*/
         $model = $this->subscriberRepository->findOneByEmail($email);
 
         self::assertInstanceOf(Subscriber::class, $model);
@@ -177,19 +185,23 @@ class SubscriberRepositoryTest extends KernelTestCase
 
     public function testFindsAssociatedSubscriptions()
     {
-        $this->loadFixtures([
+        $this->loadFixtures(
+            [
             AdministratorFixture::class,
             SubscriberFixture::class,
             SubscriberListFixture::class,
             SubscriptionFixture::class,
-        ]);
+            ]
+        );
 
         $id = 1;
         $model = $this->subscriberRepository->findSubscriberWithSubscriptions($id);
         $subscriptions = $model->getSubscriptions();
 
         self::assertFalse($subscriptions->isEmpty());
-        /** @var Subscription $firstSubscription */
+        /**
+ * @var Subscription $firstSubscription 
+*/
         $firstSubscription = $subscriptions->first();
         self::assertInstanceOf(Subscription::class, $firstSubscription);
         $expectedSubscriberListId = 2;
@@ -201,7 +213,9 @@ class SubscriberRepositoryTest extends KernelTestCase
         $this->loadFixtures([SubscriberFixture::class, SubscriberListFixture::class, SubscriptionFixture::class]);
 
         $id = 1;
-        /** @var Subscriber $model */
+        /**
+ * @var Subscriber $model 
+*/
         $model = $this->subscriberRepository->findSubscriberWithSubscriptions($id);
         $subscriberLists = new ArrayCollection();
         foreach ($model->getSubscriptions() as $subscription) {
@@ -221,7 +235,9 @@ class SubscriberRepositoryTest extends KernelTestCase
         $initialNumberOfSubscriptions = count($this->subscriptionRepository->findAll());
 
         $id = 2;
-        /** @var Subscriber $model */
+        /**
+ * @var Subscriber $model 
+*/
         $model = $this->subscriberRepository->findSubscriberWithSubscriptions($id);
 
         $numberOfAssociatedSubscriptions = count($model->getSubscriptions());
@@ -241,7 +257,9 @@ class SubscriberRepositoryTest extends KernelTestCase
     {
         $this->loadFixtures([SubscriberFixture::class]);
 
-        /** @var Subscriber[] $allModels */
+        /**
+ * @var Subscriber[] $allModels 
+*/
         $allModels = $this->subscriberRepository->findAll();
         $numberOfModelsBeforeRemove = count($allModels);
         $firstModel = $allModels[0];

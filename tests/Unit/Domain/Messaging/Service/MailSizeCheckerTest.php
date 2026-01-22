@@ -128,9 +128,11 @@ class MailSizeCheckerTest extends TestCase
 
         $this->logger->expects($this->once())
             ->method('warning')
-            ->with($this->callback(
-                fn (string $msg) => str_contains($msg, 'Message too large') && str_contains($msg, '7')
-            ));
+            ->with(
+                $this->callback(
+                    fn (string $msg) => str_contains($msg, 'Message too large') && str_contains($msg, '7')
+                )
+            );
 
         $this->eventLogManager->expects($this->exactly(2))
             ->method('log')

@@ -33,8 +33,10 @@ class DeleteBounceHandlerTest extends TestCase
         $bounce = $this->createMock(Bounce::class);
         $this->bounceManager->expects($this->once())->method('delete')->with($bounce);
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'bounce' => $bounce,
-        ]);
+            ]
+        );
     }
 }

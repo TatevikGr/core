@@ -41,11 +41,13 @@ class DeleteUserHandlerTest extends TestCase
             ->method('info')
             ->with(
                 'User deleted by bounce rule',
-                $this->callback(function ($context) {
-                    return isset($context['user'], $context['rule'])
+                $this->callback(
+                    function ($context) {
+                        return isset($context['user'], $context['rule'])
                         && $context['user'] === 'user@example.com'
                         && $context['rule'] === 42;
-                })
+                    }
+                )
             );
 
         $this->subscriberManager
@@ -53,10 +55,12 @@ class DeleteUserHandlerTest extends TestCase
             ->method('deleteSubscriber')
             ->with($subscriber);
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'ruleId' => 42,
-        ]);
+            ]
+        );
     }
 
     public function testHandleDoesNothingWhenNoSubscriber(): void
@@ -64,8 +68,10 @@ class DeleteUserHandlerTest extends TestCase
         $this->logger->expects($this->never())->method('info');
         $this->subscriberManager->expects($this->never())->method('deleteSubscriber');
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'ruleId' => 1,
-        ]);
+            ]
+        );
     }
 }

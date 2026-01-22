@@ -194,10 +194,12 @@ class AnalyticsServiceTest extends TestCase
 
         $this->subscriberRepository->expects(self::once())
             ->method('findAll')
-            ->willReturn([
+            ->willReturn(
+                [
                 $subscriber1, $subscriber2, $subscriber3, $subscriber4, $subscriber5,
                 $subscriber6, $subscriber7, $subscriber8, $subscriber9
-            ]);
+                ]
+            );
 
         $result = $this->subject->getTopDomains(50, 1);
 
@@ -255,10 +257,12 @@ class AnalyticsServiceTest extends TestCase
 
         $this->subscriberRepository->expects(self::once())
             ->method('findAll')
-            ->willReturn([
+            ->willReturn(
+                [
                 $subscriber1, $subscriber2, $subscriber3, $subscriber4,
                 $subscriber5, $subscriber6, $subscriber7
-            ]);
+                ]
+            );
 
         $result = $this->subject->getDomainConfirmationStatistics();
 
@@ -307,9 +311,11 @@ class AnalyticsServiceTest extends TestCase
 
         $this->subscriberRepository->expects(self::once())
             ->method('findAll')
-            ->willReturn([
+            ->willReturn(
+                [
                 $subscriber1, $subscriber2, $subscriber3, $subscriber4, $subscriber5
-            ]);
+                ]
+            );
 
         $result = $this->subject->getTopLocalParts();
 

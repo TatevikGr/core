@@ -57,10 +57,12 @@ class BlacklistEmailHandlerTest extends TestCase
                 $this->stringContains('email auto unsubscribed for bounce rule 42')
             );
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'ruleId' => 42,
-        ]);
+            ]
+        );
     }
 
     public function testHandleDoesNothingWhenNoSubscriber(): void
@@ -68,8 +70,10 @@ class BlacklistEmailHandlerTest extends TestCase
         $this->blacklistService->expects($this->never())->method('blacklist');
         $this->historyManager->expects($this->never())->method('addHistory');
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'ruleId' => 1,
-        ]);
+            ]
+        );
     }
 }

@@ -110,10 +110,12 @@ class SubscriberCsvImporterTest extends TestCase
         $this->csvImporterMock
             ->method('parseAndValidate')
             ->with($tempFile)
-            ->willReturn([
+            ->willReturn(
+                [
                 'valid' => [$importDto1, $importDto2],
                 'errors' => []
-            ]);
+                ]
+            );
 
         $this->subscriberManagerMock
             ->expects($this->exactly(2))
@@ -175,24 +177,28 @@ class SubscriberCsvImporterTest extends TestCase
         $this->csvImporterMock
             ->method('parseAndValidate')
             ->with($tempFile)
-            ->willReturn([
+            ->willReturn(
+                [
                 'valid' => [$importDto],
                 'errors' => []
-            ]);
+                ]
+            );
 
         $this->subscriberManagerMock
             ->expects($this->once())
             ->method('updateFromImport')
             ->with($existingSubscriber, $importDto)
-            ->willReturn(new ChangeSetDto(
-                [
+            ->willReturn(
+                new ChangeSetDto(
+                    [
                     'extra_data' => [null, 'Updated data'],
                     'confirmed' => [false, true],
                     'html_email' => [false, true],
                     'blacklisted' => [true, false],
                     'disabled' => [true, false],
-                ]
-            ));
+                    ]
+                )
+            );
 
         $this->attributeManagerMock
             ->expects($this->once())
@@ -213,8 +219,10 @@ class SubscriberCsvImporterTest extends TestCase
     public function testImportResolvesByForeignKeyWhenProvidedAndMatches(): void
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'csv_test_fk');
-        file_put_contents($tempFile, "email,confirmed,html_email,blacklisted,disabled,foreignkey\n" .
-            "user@example.com,1,1,0,0,EXT-123\n");
+        file_put_contents(
+            $tempFile, "email,confirmed,html_email,blacklisted,disabled,foreignkey\n" .
+            "user@example.com,1,1,0,0,EXT-123\n"
+        );
 
         $uploadedFile = $this->createMock(UploadedFile::class);
         $uploadedFile->method('getRealPath')->willReturn($tempFile);
@@ -246,10 +254,12 @@ class SubscriberCsvImporterTest extends TestCase
         $this->csvImporterMock
             ->method('parseAndValidate')
             ->with($tempFile)
-            ->willReturn([
+            ->willReturn(
+                [
                 'valid' => [$dto],
                 'errors' => []
-            ]);
+                ]
+            );
 
         $this->subscriberManagerMock
             ->expects($this->once())
@@ -276,8 +286,10 @@ class SubscriberCsvImporterTest extends TestCase
     public function testImportConflictWhenEmailAndForeignKeyReferToDifferentSubscribers(): void
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'csv_test_fk_conflict');
-        file_put_contents($tempFile, "email,confirmed,html_email,blacklisted,disabled,foreignkey\n" .
-            "conflict@example.com,1,1,0,0,EXT-999\n");
+        file_put_contents(
+            $tempFile, "email,confirmed,html_email,blacklisted,disabled,foreignkey\n" .
+            "conflict@example.com,1,1,0,0,EXT-999\n"
+        );
 
         $uploadedFile = $this->createMock(UploadedFile::class);
         $uploadedFile->method('getRealPath')->willReturn($tempFile);
@@ -311,10 +323,12 @@ class SubscriberCsvImporterTest extends TestCase
         $this->csvImporterMock
             ->method('parseAndValidate')
             ->with($tempFile)
-            ->willReturn([
+            ->willReturn(
+                [
                 'valid' => [$dto],
                 'errors' => []
-            ]);
+                ]
+            );
 
         $this->subscriberManagerMock
             ->expects($this->never())
@@ -338,8 +352,10 @@ class SubscriberCsvImporterTest extends TestCase
     public function testImportResolvesByEmailWhenForeignKeyNotFound(): void
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'csv_test_fk_email');
-        file_put_contents($tempFile, "email,confirmed,html_email,blacklisted,disabled,foreignkey\n" .
-            "existing@example.com,1,1,0,0,EXT-404\n");
+        file_put_contents(
+            $tempFile, "email,confirmed,html_email,blacklisted,disabled,foreignkey\n" .
+            "existing@example.com,1,1,0,0,EXT-404\n"
+        );
 
         $uploadedFile = $this->createMock(UploadedFile::class);
         $uploadedFile->method('getRealPath')->willReturn($tempFile);
@@ -371,10 +387,12 @@ class SubscriberCsvImporterTest extends TestCase
         $this->csvImporterMock
             ->method('parseAndValidate')
             ->with($tempFile)
-            ->willReturn([
+            ->willReturn(
+                [
                 'valid' => [$dto],
                 'errors' => []
-            ]);
+                ]
+            );
 
         $this->subscriberManagerMock
             ->expects($this->once())
@@ -401,8 +419,10 @@ class SubscriberCsvImporterTest extends TestCase
     public function testImportCreatesNewWhenNeitherEmailNorForeignKeyFound(): void
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'csv_test_fk_create');
-        file_put_contents($tempFile, "email,confirmed,html_email,blacklisted,disabled,foreignkey\n" .
-            "new@example.com,0,1,0,0,NEW-KEY\n");
+        file_put_contents(
+            $tempFile, "email,confirmed,html_email,blacklisted,disabled,foreignkey\n" .
+            "new@example.com,0,1,0,0,NEW-KEY\n"
+        );
 
         $uploadedFile = $this->createMock(UploadedFile::class);
         $uploadedFile->method('getRealPath')->willReturn($tempFile);
@@ -431,10 +451,12 @@ class SubscriberCsvImporterTest extends TestCase
         $this->csvImporterMock
             ->method('parseAndValidate')
             ->with($tempFile)
-            ->willReturn([
+            ->willReturn(
+                [
                 'valid' => [$dto],
                 'errors' => []
-            ]);
+                ]
+            );
 
         $created = $this->createMock(Subscriber::class);
         $created->method('getId')->willReturn(100);

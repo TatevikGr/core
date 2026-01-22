@@ -34,10 +34,12 @@ class DynamicListAttrManagerTest extends TestCase
     private function makePartialManager(array $methods): DynamicListAttrManager|MockObject
     {
         return $this->getMockBuilder(DynamicListAttrManager::class)
-            ->setConstructorArgs([
+            ->setConstructorArgs(
+                [
                 $this->listAttrRepo,
                 $this->subscriberAttributeValueRepo,
-            ])
+                ]
+            )
             ->onlyMethods($methods)
             ->getMock();
     }
@@ -59,16 +61,22 @@ class DynamicListAttrManagerTest extends TestCase
 
         $this->listAttrRepo->expects($this->once())
             ->method('transactional')
-            ->willReturnCallback(function (callable $cb) {
-                // The callback should call insertMany with one unique row
-                $this->listAttrRepo->expects($this->once())
-                    ->method('insertMany')
-                    ->with('colors', $this->callback(function ($arr) {
-                        return is_array($arr) && count($arr) === 1 && $arr[0] instanceof DynamicListAttrDto;
-                    }))
-                    ->willReturn([new DynamicListAttrDto(id: 1, name: 'Red', listOrder: 1)]);
-                return $cb();
-            });
+            ->willReturnCallback(
+                function (callable $cb) {
+                    // The callback should call insertMany with one unique row
+                    $this->listAttrRepo->expects($this->once())
+                        ->method('insertMany')
+                        ->with(
+                            'colors', $this->callback(
+                                function ($arr) {
+                                    return is_array($arr) && count($arr) === 1 && $arr[0] instanceof DynamicListAttrDto;
+                                }
+                            )
+                        )
+                        ->willReturn([new DynamicListAttrDto(id: 1, name: 'Red', listOrder: 1)]);
+                    return $cb();
+                }
+            );
 
         $opts = [
             new DynamicListAttrDto(id: null, name: 'Red'),
@@ -85,9 +93,11 @@ class DynamicListAttrManagerTest extends TestCase
     {
         $this->listAttrRepo->expects($this->once())
             ->method('transactional')
-            ->willReturnCallback(function (callable $cb) {
-                return $cb();
-            });
+            ->willReturnCallback(
+                function (callable $cb) {
+                    return $cb();
+                }
+            );
 
         $this->listAttrRepo->expects($this->once())
             ->method('getAll')
@@ -98,16 +108,22 @@ class DynamicListAttrManagerTest extends TestCase
         $manager = $this->makePartialManager(['insertOptions']);
         $manager->expects($this->once())
             ->method('insertOptions')
-            ->with('colors', $this->callback(function ($arr) {
-                // Should get two unique items
-                return is_array($arr) && count($arr) === 2;
-            }), $this->anything())
+            ->with(
+                'colors', $this->callback(
+                    function ($arr) {
+                        // Should get two unique items
+                        return is_array($arr) && count($arr) === 2;
+                    }
+                ), $this->anything()
+            )
             ->willReturn([]);
 
-        $result = $manager->syncOptions('colors', [
+        $result = $manager->syncOptions(
+            'colors', [
             new DynamicListAttrDto(id: null, name: 'Red'),
             new DynamicListAttrDto(id: null, name: 'Blue'),
-        ]);
+            ]
+        );
 
         $this->assertCount(0, $result);
     }

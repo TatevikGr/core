@@ -57,11 +57,13 @@ class BlacklistUserHandlerTest extends TestCase
                 $this->stringContains('bounce rule 17')
             );
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'blacklisted' => false,
             'ruleId' => 17,
-        ]);
+            ]
+        );
     }
 
     public function testHandleDoesNothingWhenAlreadyBlacklistedOrNoSubscriber(): void
@@ -71,16 +73,20 @@ class BlacklistUserHandlerTest extends TestCase
         $this->historyManager->expects($this->never())->method('addHistory');
 
         // Already blacklisted
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'blacklisted' => true,
             'ruleId' => 5,
-        ]);
+            ]
+        );
 
         // No subscriber provided
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'blacklisted' => false,
             'ruleId' => 5,
-        ]);
+            ]
+        );
     }
 }

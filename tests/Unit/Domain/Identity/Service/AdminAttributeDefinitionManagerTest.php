@@ -49,13 +49,17 @@ class AdminAttributeDefinitionManagerTest extends TestCase
 
         $this->repository->expects($this->once())
             ->method('persist')
-            ->with($this->callback(function (AdminAttributeDefinition $definition) use ($dto) {
-                return $definition->getName() === $dto->name
-                    && $definition->getType() === $dto->type
-                    && $definition->getListOrder() === $dto->listOrder
-                    && $definition->getDefaultValue() === $dto->defaultValue
-                    && $definition->isRequired() === $dto->required;
-            }));
+            ->with(
+                $this->callback(
+                    function (AdminAttributeDefinition $definition) use ($dto) {
+                        return $definition->getName() === $dto->name
+                        && $definition->getType() === $dto->type
+                        && $definition->getListOrder() === $dto->listOrder
+                        && $definition->getDefaultValue() === $dto->defaultValue
+                        && $definition->isRequired() === $dto->required;
+                    }
+                )
+            );
 
         $result = $this->subject->create($dto);
 

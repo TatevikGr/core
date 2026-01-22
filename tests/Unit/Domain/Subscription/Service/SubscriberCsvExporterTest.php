@@ -84,10 +84,12 @@ class SubscriberCsvExporterTest extends TestCase
 
         $this->attributeManagerMock
             ->method('getSubscriberAttribute')
-            ->willReturnMap([
+            ->willReturnMap(
+                [
                 [1, 1, $attributeValue1],
                 [2, 1, $attributeValue2],
-            ]);
+                ]
+            );
 
         $response = $this->subject->exportToCsv($filter, 2);
         $response->sendContent();
@@ -132,9 +134,11 @@ class SubscriberCsvExporterTest extends TestCase
 
         $this->attributeManagerMock
             ->method('getSubscriberAttribute')
-            ->willReturnMap([
+            ->willReturnMap(
+                [
                 [1, 1, $attributeValue1],
-            ]);
+                ]
+            );
 
         $response = $this->subject->exportToCsv();
         $response->sendContent();

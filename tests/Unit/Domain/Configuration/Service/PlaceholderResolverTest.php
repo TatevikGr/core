@@ -61,10 +61,12 @@ final class PlaceholderResolverTest extends TestCase
         $placeholderContext = $this->createMock(PlaceholderContext::class);
 
         $count = 0;
-        $resolver->register('X', function () use (&$count) {
-            $count++;
-            return 'V';
-        });
+        $resolver->register(
+            'X', function () use (&$count) {
+                $count++;
+                return 'V';
+            }
+        );
 
         $input = 'Start [x][X]-[x] End';
         $expect = 'Start VV-V End';

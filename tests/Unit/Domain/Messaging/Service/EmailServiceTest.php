@@ -42,13 +42,17 @@ class EmailServiceTest extends TestCase
 
         $this->messageBus->expects($this->once())
             ->method('dispatch')
-            ->with($this->callback(function (AsyncEmailMessage $message) {
-                $sentEmail = $message->getEmail();
-                $fromAddresses = $sentEmail->getFrom();
-                $this->assertCount(1, $fromAddresses);
-                $this->assertEquals($this->defaultFromEmail, $fromAddresses[0]->getAddress());
-                return true;
-            }))
+            ->with(
+                $this->callback(
+                    function (AsyncEmailMessage $message) {
+                        $sentEmail = $message->getEmail();
+                        $fromAddresses = $sentEmail->getFrom();
+                        $this->assertCount(1, $fromAddresses);
+                        $this->assertEquals($this->defaultFromEmail, $fromAddresses[0]->getAddress());
+                        return true;
+                    }
+                )
+            )
             ->willReturn(new Envelope(new AsyncEmailMessage($email)));
 
         $this->emailService->sendEmail($email);
@@ -63,12 +67,16 @@ class EmailServiceTest extends TestCase
 
         $this->mailer->expects($this->once())
             ->method('send')
-            ->with($this->callback(function (Email $sentEmail) {
-                $fromAddresses = $sentEmail->getFrom();
-                $this->assertCount(1, $fromAddresses);
-                $this->assertEquals($this->defaultFromEmail, $fromAddresses[0]->getAddress());
-                return true;
-            }));
+            ->with(
+                $this->callback(
+                    function (Email $sentEmail) {
+                        $fromAddresses = $sentEmail->getFrom();
+                        $this->assertCount(1, $fromAddresses);
+                        $this->assertEquals($this->defaultFromEmail, $fromAddresses[0]->getAddress());
+                        return true;
+                    }
+                )
+            );
 
         $this->emailService->sendEmailSync($email);
     }
@@ -84,13 +92,17 @@ class EmailServiceTest extends TestCase
 
         $this->messageBus->expects($this->once())
             ->method('dispatch')
-            ->with($this->callback(function (AsyncEmailMessage $message) use ($customFrom) {
-                $sentEmail = $message->getEmail();
-                $fromAddresses = $sentEmail->getFrom();
-                $this->assertCount(1, $fromAddresses);
-                $this->assertEquals($customFrom, $fromAddresses[0]->getAddress());
-                return true;
-            }))
+            ->with(
+                $this->callback(
+                    function (AsyncEmailMessage $message) use ($customFrom) {
+                        $sentEmail = $message->getEmail();
+                        $fromAddresses = $sentEmail->getFrom();
+                        $this->assertCount(1, $fromAddresses);
+                        $this->assertEquals($customFrom, $fromAddresses[0]->getAddress());
+                        return true;
+                    }
+                )
+            )
             ->willReturn(new Envelope(new AsyncEmailMessage($email)));
 
         $this->emailService->sendEmail($email);
@@ -107,12 +119,16 @@ class EmailServiceTest extends TestCase
 
         $this->mailer->expects($this->once())
             ->method('send')
-            ->with($this->callback(function (Email $sentEmail) use ($customFrom) {
-                $fromAddresses = $sentEmail->getFrom();
-                $this->assertCount(1, $fromAddresses);
-                $this->assertEquals($customFrom, $fromAddresses[0]->getAddress());
-                return true;
-            }));
+            ->with(
+                $this->callback(
+                    function (Email $sentEmail) use ($customFrom) {
+                        $fromAddresses = $sentEmail->getFrom();
+                        $this->assertCount(1, $fromAddresses);
+                        $this->assertEquals($customFrom, $fromAddresses[0]->getAddress());
+                        return true;
+                    }
+                )
+            );
 
         $this->emailService->sendEmailSync($email);
     }
@@ -130,12 +146,16 @@ class EmailServiceTest extends TestCase
 
         $this->messageBus->expects($this->once())
             ->method('dispatch')
-            ->with($this->callback(function (AsyncEmailMessage $message) use ($cc, $bcc, $replyTo) {
-                $this->assertEquals($cc, $message->getCc());
-                $this->assertEquals($bcc, $message->getBcc());
-                $this->assertEquals($replyTo, $message->getReplyTo());
-                return true;
-            }))
+            ->with(
+                $this->callback(
+                    function (AsyncEmailMessage $message) use ($cc, $bcc, $replyTo) {
+                        $this->assertEquals($cc, $message->getCc());
+                        $this->assertEquals($bcc, $message->getBcc());
+                        $this->assertEquals($replyTo, $message->getReplyTo());
+                        return true;
+                    }
+                )
+            )
             ->willReturn(new Envelope(new AsyncEmailMessage($email)));
 
         $this->emailService->sendEmail($email, $cc, $bcc, $replyTo);
@@ -154,22 +174,26 @@ class EmailServiceTest extends TestCase
 
         $this->mailer->expects($this->once())
             ->method('send')
-            ->with($this->callback(function (Email $sentEmail) use ($cc, $bcc, $replyTo) {
-                $ccAddresses = $sentEmail->getCc();
-                $bccAddresses = $sentEmail->getBcc();
-                $replyToAddresses = $sentEmail->getReplyTo();
+            ->with(
+                $this->callback(
+                    function (Email $sentEmail) use ($cc, $bcc, $replyTo) {
+                        $ccAddresses = $sentEmail->getCc();
+                        $bccAddresses = $sentEmail->getBcc();
+                        $replyToAddresses = $sentEmail->getReplyTo();
 
-                $this->assertCount(1, $ccAddresses);
-                $this->assertEquals($cc[0], $ccAddresses[0]->getAddress());
+                        $this->assertCount(1, $ccAddresses);
+                        $this->assertEquals($cc[0], $ccAddresses[0]->getAddress());
 
-                $this->assertCount(1, $bccAddresses);
-                $this->assertEquals($bcc[0], $bccAddresses[0]->getAddress());
+                        $this->assertCount(1, $bccAddresses);
+                        $this->assertEquals($bcc[0], $bccAddresses[0]->getAddress());
 
-                $this->assertCount(1, $replyToAddresses);
-                $this->assertEquals($replyTo[0], $replyToAddresses[0]->getAddress());
+                        $this->assertCount(1, $replyToAddresses);
+                        $this->assertEquals($replyTo[0], $replyToAddresses[0]->getAddress());
 
-                return true;
-            }));
+                        return true;
+                    }
+                )
+            );
 
         $this->emailService->sendEmailSync($email, $cc, $bcc, $replyTo);
     }
@@ -185,10 +209,14 @@ class EmailServiceTest extends TestCase
 
         $this->messageBus->expects($this->once())
             ->method('dispatch')
-            ->with($this->callback(function (AsyncEmailMessage $message) use ($attachments) {
-                $this->assertEquals($attachments, $message->getAttachments());
-                return true;
-            }))
+            ->with(
+                $this->callback(
+                    function (AsyncEmailMessage $message) use ($attachments) {
+                        $this->assertEquals($attachments, $message->getAttachments());
+                        return true;
+                    }
+                )
+            )
             ->willReturn(new Envelope(new AsyncEmailMessage($email)));
 
         $this->emailService->sendEmail($email, [], [], [], $attachments);
@@ -220,25 +248,29 @@ class EmailServiceTest extends TestCase
 
         $this->messageBus->expects($this->exactly(count($recipients)))
             ->method('dispatch')
-            ->with($this->callback(function (AsyncEmailMessage $message) use (
-                $subject,
-                $text,
-                $html,
-                $from,
-                $fromName
-            ) {
-                $sentEmail = $message->getEmail();
-                $this->assertEquals($subject, $sentEmail->getSubject());
-                $this->assertEquals($text, $sentEmail->getTextBody());
-                $this->assertEquals($html, $sentEmail->getHtmlBody());
+            ->with(
+                $this->callback(
+                    function (AsyncEmailMessage $message) use (
+                        $subject,
+                        $text,
+                        $html,
+                        $from,
+                        $fromName
+                    ) {
+                        $sentEmail = $message->getEmail();
+                        $this->assertEquals($subject, $sentEmail->getSubject());
+                        $this->assertEquals($text, $sentEmail->getTextBody());
+                        $this->assertEquals($html, $sentEmail->getHtmlBody());
 
-                $fromAddresses = $sentEmail->getFrom();
-                $this->assertCount(1, $fromAddresses);
-                $this->assertEquals($from, $fromAddresses[0]->getAddress());
-                $this->assertEquals($fromName, $fromAddresses[0]->getName());
+                        $fromAddresses = $sentEmail->getFrom();
+                        $this->assertCount(1, $fromAddresses);
+                        $this->assertEquals($from, $fromAddresses[0]->getAddress());
+                        $this->assertEquals($fromName, $fromAddresses[0]->getName());
 
-                return true;
-            }))
+                        return true;
+                    }
+                )
+            )
             ->willReturn(new Envelope($this->createMock(AsyncEmailMessage::class)));
 
         $this->emailService->sendBulkEmail($recipients, $subject, $text, $html, $from, $fromName);
@@ -255,18 +287,22 @@ class EmailServiceTest extends TestCase
 
         $this->mailer->expects($this->exactly(count($recipients)))
             ->method('send')
-            ->with($this->callback(function (Email $sentEmail) use ($subject, $text, $html, $from, $fromName) {
-                $this->assertEquals($subject, $sentEmail->getSubject());
-                $this->assertEquals($text, $sentEmail->getTextBody());
-                $this->assertEquals($html, $sentEmail->getHtmlBody());
+            ->with(
+                $this->callback(
+                    function (Email $sentEmail) use ($subject, $text, $html, $from, $fromName) {
+                        $this->assertEquals($subject, $sentEmail->getSubject());
+                        $this->assertEquals($text, $sentEmail->getTextBody());
+                        $this->assertEquals($html, $sentEmail->getHtmlBody());
 
-                $fromAddresses = $sentEmail->getFrom();
-                $this->assertCount(1, $fromAddresses);
-                $this->assertEquals($from, $fromAddresses[0]->getAddress());
-                $this->assertEquals($fromName, $fromAddresses[0]->getName());
+                        $fromAddresses = $sentEmail->getFrom();
+                        $this->assertCount(1, $fromAddresses);
+                        $this->assertEquals($from, $fromAddresses[0]->getAddress());
+                        $this->assertEquals($fromName, $fromAddresses[0]->getName());
 
-                return true;
-            }));
+                        return true;
+                    }
+                )
+            );
 
         $this->emailService->sendBulkEmailSync($recipients, $subject, $text, $html, $from, $fromName);
     }
@@ -279,13 +315,17 @@ class EmailServiceTest extends TestCase
 
         $this->messageBus->expects($this->exactly(count($recipients)))
             ->method('dispatch')
-            ->with($this->callback(function (AsyncEmailMessage $message) {
-                $sentEmail = $message->getEmail();
-                $fromAddresses = $sentEmail->getFrom();
-                $this->assertCount(1, $fromAddresses);
-                $this->assertEquals($this->defaultFromEmail, $fromAddresses[0]->getAddress());
-                return true;
-            }))
+            ->with(
+                $this->callback(
+                    function (AsyncEmailMessage $message) {
+                        $sentEmail = $message->getEmail();
+                        $fromAddresses = $sentEmail->getFrom();
+                        $this->assertCount(1, $fromAddresses);
+                        $this->assertEquals($this->defaultFromEmail, $fromAddresses[0]->getAddress());
+                        return true;
+                    }
+                )
+            )
             ->willReturn(new Envelope($this->createMock(AsyncEmailMessage::class)));
 
         $this->emailService->sendBulkEmail($recipients, $subject, $text);
@@ -299,12 +339,16 @@ class EmailServiceTest extends TestCase
 
         $this->mailer->expects($this->exactly(count($recipients)))
             ->method('send')
-            ->with($this->callback(function (Email $sentEmail) {
-                $fromAddresses = $sentEmail->getFrom();
-                $this->assertCount(1, $fromAddresses);
-                $this->assertEquals($this->defaultFromEmail, $fromAddresses[0]->getAddress());
-                return true;
-            }));
+            ->with(
+                $this->callback(
+                    function (Email $sentEmail) {
+                        $fromAddresses = $sentEmail->getFrom();
+                        $this->assertCount(1, $fromAddresses);
+                        $this->assertEquals($this->defaultFromEmail, $fromAddresses[0]->getAddress());
+                        return true;
+                    }
+                )
+            );
 
         $this->emailService->sendBulkEmailSync($recipients, $subject, $text);
     }

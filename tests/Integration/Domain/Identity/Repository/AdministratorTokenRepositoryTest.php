@@ -51,7 +51,9 @@ class AdministratorTokenRepositoryTest extends WebTestCase
         $expiry = new DateTime('2017-06-22 16:43:29');
         $key = 'cfdf64eecbbf336628b0f3071adba762';
 
-        /** @var AdministratorToken $model */
+        /**
+ * @var AdministratorToken $model 
+*/
         $model = $this->repository->find($id);
 
         self::assertInstanceOf(AdministratorToken::class, $model);
@@ -66,7 +68,9 @@ class AdministratorTokenRepositoryTest extends WebTestCase
         $this->loadFixtures([DetachedAdministratorTokenFixture::class]);
 
         $id = 1;
-        /** @var AdministratorToken $model */
+        /**
+ * @var AdministratorToken $model 
+*/
         $model = $this->repository->find($id);
         $creationDate = $model->getCreatedAt();
 
@@ -93,7 +97,9 @@ class AdministratorTokenRepositoryTest extends WebTestCase
         $id = 2;
         $key = '8321b19193d80ce5e1b7cd8742266a5f';
 
-        /** @var AdministratorToken $model */
+        /**
+ * @var AdministratorToken $model 
+*/
         $model = $this->repository->findOneUnexpiredByKey($key);
 
         self::assertInstanceOf(AdministratorToken::class, $model);
@@ -127,7 +133,9 @@ class AdministratorTokenRepositoryTest extends WebTestCase
         $this->loadFixtures([AdministratorFixture::class]);
 
         $administratorRepository = $this->getContainer()->get(AdministratorRepository::class);
-        /** @var Administrator $administrator */
+        /**
+ * @var Administrator $administrator 
+*/
         $administrator = $administratorRepository->find(1);
 
         $model = new AdministratorToken($administrator);
@@ -140,7 +148,9 @@ class AdministratorTokenRepositoryTest extends WebTestCase
     {
         $this->loadFixtures([DetachedAdministratorTokenFixture::class]);
 
-        /** @var AdministratorToken[] $allModels */
+        /**
+ * @var AdministratorToken[] $allModels 
+*/
         $allModels = $this->repository->findAll();
         $numberOfModelsBeforeRemove = count($allModels);
         $firstModel = $allModels[0];

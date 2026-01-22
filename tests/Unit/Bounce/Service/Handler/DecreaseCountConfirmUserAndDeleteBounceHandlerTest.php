@@ -55,13 +55,15 @@ class DecreaseCountConfirmUserAndDeleteBounceHandlerTest extends TestCase
         );
         $this->bounceManager->expects($this->once())->method('delete')->with($bounce);
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'userId' => 11,
             'confirmed' => false,
             'ruleId' => 77,
             'bounce' => $bounce,
-        ]);
+            ]
+        );
     }
 
     public function testHandleOnlyDecrementsAndDeletesWhenAlreadyConfirmed(): void
@@ -74,13 +76,15 @@ class DecreaseCountConfirmUserAndDeleteBounceHandlerTest extends TestCase
         $this->historyManager->expects($this->never())->method('addHistory');
         $this->bounceManager->expects($this->once())->method('delete')->with($bounce);
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'userId' => 11,
             'confirmed' => true,
             'ruleId' => 77,
             'bounce' => $bounce,
-        ]);
+            ]
+        );
     }
 
     public function testHandleDeletesBounceEvenWithoutSubscriber(): void
@@ -92,10 +96,12 @@ class DecreaseCountConfirmUserAndDeleteBounceHandlerTest extends TestCase
         $this->historyManager->expects($this->never())->method('addHistory');
         $this->bounceManager->expects($this->once())->method('delete')->with($bounce);
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'confirmed' => true,
             'ruleId' => 1,
             'bounce' => $bounce,
-        ]);
+            ]
+        );
     }
 }

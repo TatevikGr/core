@@ -18,7 +18,9 @@ class DummyRepository
     {
     }
 
-    /** Doctrine normally injects the QB through $this->createQueryBuilder(). */
+    /**
+     * Doctrine normally injects the QB through $this->createQueryBuilder(). 
+     */
     protected function createQueryBuilder(string $alias): QueryBuilder
     {
         return $this->queryBuilder;

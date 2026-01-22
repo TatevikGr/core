@@ -40,13 +40,17 @@ class SubscriberManagerTest extends TestCase
         $this->subscriberRepository
             ->expects($this->once())
             ->method('persist')
-            ->with($this->callback(function (Subscriber $sub): bool {
-                return $sub->getEmail() === 'foo@bar.com'
-                    && $sub->isConfirmed() === true
-                    && $sub->isBlacklisted() === false
-                    && $sub->hasHtmlEmail() === true
-                    && $sub->isDisabled() === false;
-            }));
+            ->with(
+                $this->callback(
+                    function (Subscriber $sub): bool {
+                        return $sub->getEmail() === 'foo@bar.com'
+                        && $sub->isConfirmed() === true
+                        && $sub->isBlacklisted() === false
+                        && $sub->hasHtmlEmail() === true
+                        && $sub->isDisabled() === false;
+                    }
+                )
+            );
 
         $dto = new CreateSubscriberDto(email: 'foo@bar.com', requestConfirmation: false, htmlEmail: true);
 
@@ -65,14 +69,18 @@ class SubscriberManagerTest extends TestCase
         $this->subscriberRepository
             ->expects($this->once())
             ->method('persist')
-            ->with($this->callback(function (Subscriber $sub): bool {
-                $sub->setUniqueId('test-unique-id-456');
-                return $sub->getEmail() === 'foo@bar.com'
-                    && $sub->isConfirmed() === false
-                    && $sub->isBlacklisted() === false
-                    && $sub->hasHtmlEmail() === true
-                    && $sub->isDisabled() === false;
-            }));
+            ->with(
+                $this->callback(
+                    function (Subscriber $sub): bool {
+                        $sub->setUniqueId('test-unique-id-456');
+                        return $sub->getEmail() === 'foo@bar.com'
+                        && $sub->isConfirmed() === false
+                        && $sub->isBlacklisted() === false
+                        && $sub->hasHtmlEmail() === true
+                        && $sub->isDisabled() === false;
+                    }
+                )
+            );
 
         $dto = new CreateSubscriberDto(email: 'foo@bar.com', requestConfirmation: true, htmlEmail: true);
 
@@ -91,11 +99,15 @@ class SubscriberManagerTest extends TestCase
         $this->subscriberRepository
             ->expects($this->once())
             ->method('persist')
-            ->with($this->callback(function (Subscriber $subscriber) use (&$capturedSubscriber) {
-                $capturedSubscriber = $subscriber;
-                $subscriber->setUniqueId('test-unique-id-123');
-                return true;
-            }));
+            ->with(
+                $this->callback(
+                    function (Subscriber $subscriber) use (&$capturedSubscriber) {
+                        $capturedSubscriber = $subscriber;
+                        $subscriber->setUniqueId('test-unique-id-123');
+                        return true;
+                    }
+                )
+            );
 
         $dto = new CreateSubscriberDto(email: 'test@example.com', requestConfirmation: true, htmlEmail: true);
         $this->subscriberManager->createSubscriber($dto);

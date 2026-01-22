@@ -36,29 +36,33 @@ class PasswordResetMessageHandlerTest extends TestCase
 
         $this->emailService->expects($this->once())
             ->method('sendEmail')
-            ->with($this->callback(function (Email $email) use ($userEmail, $token) {
-                $this->assertEquals([$userEmail], $this->getEmailAddresses($email->getTo()));
-                $this->assertEquals('Password Reset Request', $email->getSubject());
+            ->with(
+                $this->callback(
+                    function (Email $email) use ($userEmail, $token) {
+                        $this->assertEquals([$userEmail], $this->getEmailAddresses($email->getTo()));
+                        $this->assertEquals('Password Reset Request', $email->getSubject());
 
-                $textContent = $email->getTextBody();
-                $this->assertStringContainsString(
-                    'A password reset has been requested for your account',
-                    $textContent
-                );
-                $this->assertStringContainsString($token, $textContent);
+                        $textContent = $email->getTextBody();
+                        $this->assertStringContainsString(
+                            'A password reset has been requested for your account',
+                            $textContent
+                        );
+                        $this->assertStringContainsString($token, $textContent);
 
-                $htmlContent = $email->getHtmlBody();
-                $this->assertStringContainsString('<p>Password Reset Request!</p>', $htmlContent);
-                $this->assertStringContainsString(
-                    'A password reset has been requested for your account',
-                    $htmlContent
-                );
+                        $htmlContent = $email->getHtmlBody();
+                        $this->assertStringContainsString('<p>Password Reset Request!</p>', $htmlContent);
+                        $this->assertStringContainsString(
+                            'A password reset has been requested for your account',
+                            $htmlContent
+                        );
                 
-                $expectedLink = $this->passwordResetUrl . '?uniqueId=' . urlencode($token);
-                $this->assertStringContainsString('<a href="' . $expectedLink . '">Reset Password</a>', $htmlContent);
+                        $expectedLink = $this->passwordResetUrl . '?uniqueId=' . urlencode($token);
+                        $this->assertStringContainsString('<a href="' . $expectedLink . '">Reset Password</a>', $htmlContent);
 
-                return true;
-            }));
+                        return true;
+                    }
+                )
+            );
 
         $this->handler->__invoke($message);
     }
@@ -68,8 +72,10 @@ class PasswordResetMessageHandlerTest extends TestCase
      */
     private function getEmailAddresses(array $addresses): array
     {
-        return array_map(function ($address) {
-            return $address->getAddress();
-        }, $addresses);
+        return array_map(
+            function ($address) {
+                return $address->getAddress();
+            }, $addresses
+        );
     }
 }

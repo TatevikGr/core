@@ -108,19 +108,21 @@ class AdvancedBounceRulesProcessorTest extends TestCase
         // Rule matches for first and third, not for second
         $this->ruleManager->expects($this->exactly(3))
             ->method('matchBounceRules')
-            ->willReturnCallback(function (string $text, array $r) use ($rules) {
-                $this->assertSame($rules, $r);
-                if ($text === 'H1' . "\n\n" . 'D1') {
-                    return $rules[0];
+            ->willReturnCallback(
+                function (string $text, array $r) use ($rules) {
+                    $this->assertSame($rules, $r);
+                    if ($text === 'H1' . "\n\n" . 'D1') {
+                        return $rules[0];
+                    }
+                    if ($text === 'H2' . "\n\n" . 'D2') {
+                        return null;
+                    }
+                    if ($text === 'H3' . "\n\n" . 'D3') {
+                        return $rules[1];
+                    }
+                    $this->fail('Unexpected arguments to matchBounceRules: ' . $text);
                 }
-                if ($text === 'H2' . "\n\n" . 'D2') {
-                    return null;
-                }
-                if ($text === 'H3' . "\n\n" . 'D3') {
-                    return $rules[1];
-                }
-                $this->fail('Unexpected arguments to matchBounceRules: ' . $text);
-            });
+            );
 
         $this->ruleManager->expects($this->exactly(2))->method('incrementCount');
         $this->ruleManager->expects($this->exactly(2))->method('linkRuleToBounce');
@@ -138,35 +140,39 @@ class AdvancedBounceRulesProcessorTest extends TestCase
 
         $this->subscriberManager->expects($this->exactly(2))
             ->method('getSubscriberById')
-            ->willReturnCallback(function (int $id) use ($subscriber111, $subscriber222) {
-                if ($id === 111) {
-                    return $subscriber111;
+            ->willReturnCallback(
+                function (int $id) use ($subscriber111, $subscriber222) {
+                    if ($id === 111) {
+                        return $subscriber111;
+                    }
+                    if ($id === 222) {
+                        return $subscriber222;
+                    }
+                    $this->fail('Unexpected subscriber id: ' . $id);
                 }
-                if ($id === 222) {
-                    return $subscriber222;
-                }
-                $this->fail('Unexpected subscriber id: ' . $id);
-            });
+            );
 
         $this->actionResolver->expects($this->exactly(2))
             ->method('handle')
-            ->willReturnCallback(function (string $action, array $ctx) {
-                if ($action === 'blacklist') {
-                    $this->assertSame(111, $ctx['userId']);
-                    $this->assertTrue($ctx['confirmed']);
-                    $this->assertFalse($ctx['blacklisted']);
-                    $this->assertSame(10, $ctx['ruleId']);
-                    $this->assertInstanceOf(Bounce::class, $ctx['bounce']);
-                } elseif ($action === 'notify') {
-                    $this->assertSame(222, $ctx['userId']);
-                    $this->assertFalse($ctx['confirmed']);
-                    $this->assertTrue($ctx['blacklisted']);
-                    $this->assertSame(20, $ctx['ruleId']);
-                } else {
-                    $this->fail('Unexpected action: ' . $action);
+            ->willReturnCallback(
+                function (string $action, array $ctx) {
+                    if ($action === 'blacklist') {
+                        $this->assertSame(111, $ctx['userId']);
+                        $this->assertTrue($ctx['confirmed']);
+                        $this->assertFalse($ctx['blacklisted']);
+                        $this->assertSame(10, $ctx['ruleId']);
+                        $this->assertInstanceOf(Bounce::class, $ctx['bounce']);
+                    } elseif ($action === 'notify') {
+                        $this->assertSame(222, $ctx['userId']);
+                        $this->assertFalse($ctx['confirmed']);
+                        $this->assertTrue($ctx['blacklisted']);
+                        $this->assertSame(20, $ctx['ruleId']);
+                    } else {
+                        $this->fail('Unexpected action: ' . $action);
+                    }
+                    return null;
                 }
-                return null;
-            });
+            );
 
         $translator = new Translator('en');
         $this->io

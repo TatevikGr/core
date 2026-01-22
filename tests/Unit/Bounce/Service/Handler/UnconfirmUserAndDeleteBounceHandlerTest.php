@@ -54,13 +54,15 @@ class UnconfirmUserAndDeleteBounceHandlerTest extends TestCase
         );
         $this->bounceManager->expects($this->once())->method('delete')->with($bounce);
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'userId' => 10,
             'confirmed' => true,
             'ruleId' => 3,
             'bounce' => $bounce,
-        ]);
+            ]
+        );
     }
 
     public function testHandleDeletesBounceAndSkipsUnconfirmWhenNotConfirmedOrNoSubscriber(): void
@@ -73,20 +75,24 @@ class UnconfirmUserAndDeleteBounceHandlerTest extends TestCase
         $this->bounceManager->expects($this->exactly(2))->method('delete')->with($bounce);
 
         // Not confirmed
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'userId' => 10,
             'confirmed' => false,
             'ruleId' => 3,
             'bounce' => $bounce,
-        ]);
+            ]
+        );
 
         // No subscriber
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'userId' => 10,
             'confirmed' => true,
             'ruleId' => 3,
             'bounce' => $bounce,
-        ]);
+            ]
+        );
     }
 }

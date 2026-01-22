@@ -43,12 +43,14 @@ class ModuleFinderTest extends TestCase
 
     public function modulesWithoutBundlesDataProvider(): array
     {
-        return $this->buildMockPackagesWithModuleConfiguration([
+        return $this->buildMockPackagesWithModuleConfiguration(
+            [
             'one module without/with empty extras' => [[]],
             'one module with extras for other stuff' => [['branch-alias' => ['dev-master' => '5.0.x-dev']]],
             'one module with empty "phplist/core" extras section' => [['phplist/core' => []]],
             'one module with empty bundles extras section' => [['phplist/core' => ['bundles' => []]]],
-        ]);
+            ]
+        );
     }
 
     private function buildMockPackagesWithModuleConfiguration(array $extrasSets): array
@@ -90,10 +92,12 @@ class ModuleFinderTest extends TestCase
 
     public function modulesWithInvalidBundlesDataProvider(): array
     {
-        return $this->buildMockPackagesWithModuleConfiguration([
+        return $this->buildMockPackagesWithModuleConfiguration(
+            [
             'one module with core section as string' => [['phplist/core' => 'foo']],
             'one module with bundles section as int' => [['phplist/core' => ['bundles' => 42]]],
-        ]);
+            ]
+        );
     }
 
     /**
@@ -114,11 +118,13 @@ class ModuleFinderTest extends TestCase
         return [
             'one module with one bundle' => [
                 [
-                    $this->buildMockPackage([
+                    $this->buildMockPackage(
+                        [
                         'phplist/core' => [
                             'bundles' => ['Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle'],
                         ],
-                    ], 'phplist/foo'),
+                        ], 'phplist/foo'
+                    ),
                 ],
                 ['phplist/foo' => ['Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle']],
             ],

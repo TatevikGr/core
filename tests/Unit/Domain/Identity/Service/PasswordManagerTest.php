@@ -88,10 +88,14 @@ class PasswordManagerTest extends TestCase
 
         $this->messageBus->expects($this->once())
             ->method('dispatch')
-            ->with($this->callback(function (PasswordResetMessage $emailObj) use ($email) {
-                $this->assertEquals($email, $emailObj->getEmail());
-                return true;
-            }))
+            ->with(
+                $this->callback(
+                    function (PasswordResetMessage $emailObj) use ($email) {
+                        $this->assertEquals($email, $emailObj->getEmail());
+                        return true;
+                    }
+                )
+            )
             ->willReturn(new Envelope(new PasswordResetMessage($email, 'token')));
 
         $token = $this->subject->generatePasswordResetToken($email);

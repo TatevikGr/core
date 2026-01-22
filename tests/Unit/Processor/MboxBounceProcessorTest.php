@@ -37,11 +37,13 @@ class MboxBounceProcessorTest extends TestCase
         $translator = new Translator('en');
         $processor = new MboxBounceProcessor($this->service, $translator);
 
-        $this->input->method('getOption')->willReturnMap([
+        $this->input->method('getOption')->willReturnMap(
+            [
             ['test', false],
             ['maximum', 0],
             ['mailbox', ''],
-        ]);
+            ]
+        );
 
         $this->io
             ->expects($this->once())
@@ -59,11 +61,13 @@ class MboxBounceProcessorTest extends TestCase
         $translator = new Translator('en');
         $processor = new MboxBounceProcessor($this->service, $translator);
 
-        $this->input->method('getOption')->willReturnMap([
+        $this->input->method('getOption')->willReturnMap(
+            [
             ['test', true],
             ['maximum', 50],
             ['mailbox', '/var/mail/bounce.mbox'],
-        ]);
+            ]
+        );
 
         $this->io
             ->expects($this->once())

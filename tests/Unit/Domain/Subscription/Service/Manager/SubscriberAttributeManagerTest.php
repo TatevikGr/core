@@ -32,9 +32,13 @@ class SubscriberAttributeManagerTest extends TestCase
 
         $entityManager->expects(self::once())
             ->method('persist')
-            ->with(self::callback(function (SubscriberAttributeValue $attr) {
-                return $attr->getValue() === 'US';
-            }));
+            ->with(
+                self::callback(
+                    function (SubscriberAttributeValue $attr) {
+                        return $attr->getValue() === 'US';
+                    }
+                )
+            );
 
         $manager = new SubscriberAttributeManager(
             attributeRepository: $subscriberAttrRepo,

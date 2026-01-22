@@ -255,17 +255,21 @@ final class ConfigProviderTest extends TestCase
         // Simulate: child is empty (null or ''), parent has value "PARENTVAL"
         $this->cache
             ->method('get')
-            ->willReturnMap([
+            ->willReturnMap(
+                [
                 ['cfg:' . $child->value, null],
                 ['cfg:' . $parent->value, 'PARENTVAL'],
-            ]);
+                ]
+            );
 
         // child -> repo null; parent -> not consulted because cache returns value
         $this->repo
             ->method('findValueByItem')
-            ->willReturnMap([
+            ->willReturnMap(
+                [
                 [$child->value, null],
-            ]);
+                ]
+            );
 
         // child miss is cached as null, parent value is not rewritten here (already cached)
         $this->cache

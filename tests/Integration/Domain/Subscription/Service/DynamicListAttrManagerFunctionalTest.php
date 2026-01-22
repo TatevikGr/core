@@ -62,12 +62,15 @@ class DynamicListAttrManagerFunctionalTest extends KernelTestCase
         $this->tablesManager->createOptionsTableIfNotExists('colours');
 
         // Insert options (including a duplicate name differing by case)
-        $inserted = $this->manager->insertOptions('colours', [
-            new DynamicListAttrDto(id: null, name: 'Red'),
-            new DynamicListAttrDto(id: null, name: 'Blue'),
-            // case-insensitive duplicate -> should be skipped
-            new DynamicListAttrDto(id: null, name: 'red'),
-        ]);
+        $inserted = $this->manager->insertOptions(
+            'colours',
+            [
+                new DynamicListAttrDto(id: null, name: 'Red'),
+                new DynamicListAttrDto(id: null, name: 'Blue'),
+                // case-insensitive duplicate -> should be skipped
+                new DynamicListAttrDto(id: null, name: 'red'),
+            ]
+        );
 
         // We expect exactly 2 distinct rows inserted
         Assert::assertCount(2, $inserted);

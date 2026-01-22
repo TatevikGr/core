@@ -22,9 +22,11 @@ class DynamicListAttrTablesManagerTest extends TestCase
     {
         $this->definitionRepo = $this->createMock(SubscriberAttributeDefinitionRepository::class);
         $this->bus = $this->createMock(MessageBusInterface::class);
-        $this->bus->method('dispatch')->willReturnCallback(function ($message) {
-            return new Envelope($message);
-        });
+        $this->bus->method('dispatch')->willReturnCallback(
+            function ($message) {
+                return new Envelope($message);
+            }
+        );
     }
 
     private function makeManager(): DynamicListAttrTablesManager
@@ -66,14 +68,20 @@ class DynamicListAttrTablesManagerTest extends TestCase
         $this->bus
             ->expects($this->exactly(2))
             ->method('dispatch')
-            ->with($this->callback(function ($message) {
-                $this->assertInstanceOf(DynamicTableMessage::class, $message);
-                $this->assertSame('phplist_listattr_sizes', $message->getTableName());
-                return true;
-            }))
-            ->willReturnCallback(function ($message) {
-                return new Envelope($message);
-            });
+            ->with(
+                $this->callback(
+                    function ($message) {
+                        $this->assertInstanceOf(DynamicTableMessage::class, $message);
+                        $this->assertSame('phplist_listattr_sizes', $message->getTableName());
+                        return true;
+                    }
+                )
+            )
+            ->willReturnCallback(
+                function ($message) {
+                    return new Envelope($message);
+                }
+            );
 
         $manager = $this->makeManager();
         $manager->createOptionsTableIfNotExists('sizes');

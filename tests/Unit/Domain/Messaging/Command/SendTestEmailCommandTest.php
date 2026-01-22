@@ -37,26 +37,32 @@ class SendTestEmailCommandTest extends TestCase
     {
         $this->emailService->expects($this->once())
             ->method('sendEmail')
-            ->with($this->callback(function (Email $email) {
-                $this->assertEquals('Test Email from phpList', $email->getSubject());
-                $this->assertStringContainsString('This is a test email', $email->getTextBody());
-                $this->assertStringContainsString('<h1>Test</h1>', $email->getHtmlBody());
+            ->with(
+                $this->callback(
+                    function (Email $email) {
+                        $this->assertEquals('Test Email from phpList', $email->getSubject());
+                        $this->assertStringContainsString('This is a test email', $email->getTextBody());
+                        $this->assertStringContainsString('<h1>Test</h1>', $email->getHtmlBody());
 
-                $toAddresses = $email->getTo();
-                $this->assertCount(1, $toAddresses);
-                $this->assertEquals('test@example.com', $toAddresses[0]->getAddress());
+                        $toAddresses = $email->getTo();
+                        $this->assertCount(1, $toAddresses);
+                        $this->assertEquals('test@example.com', $toAddresses[0]->getAddress());
 
-                $fromAddresses = $email->getFrom();
-                $this->assertCount(1, $fromAddresses);
-                $this->assertEquals('admin@example.com', $fromAddresses[0]->getAddress());
-                $this->assertEquals('Admin Team', $fromAddresses[0]->getName());
+                        $fromAddresses = $email->getFrom();
+                        $this->assertCount(1, $fromAddresses);
+                        $this->assertEquals('admin@example.com', $fromAddresses[0]->getAddress());
+                        $this->assertEquals('Admin Team', $fromAddresses[0]->getName());
 
-                return true;
-            }));
+                        return true;
+                    }
+                )
+            );
 
-        $this->commandTester->execute([
+        $this->commandTester->execute(
+            [
             'recipient' => 'test@example.com',
-        ]);
+            ]
+        );
 
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Queuing test email for', $output);
@@ -70,27 +76,33 @@ class SendTestEmailCommandTest extends TestCase
     {
         $this->emailService->expects($this->once())
             ->method('sendEmailSync')
-            ->with($this->callback(function (Email $email) {
-                $this->assertEquals('Test Email from phpList', $email->getSubject());
-                $this->assertStringContainsString('This is a test email', $email->getTextBody());
-                $this->assertStringContainsString('<h1>Test</h1>', $email->getHtmlBody());
+            ->with(
+                $this->callback(
+                    function (Email $email) {
+                        $this->assertEquals('Test Email from phpList', $email->getSubject());
+                        $this->assertStringContainsString('This is a test email', $email->getTextBody());
+                        $this->assertStringContainsString('<h1>Test</h1>', $email->getHtmlBody());
 
-                $toAddresses = $email->getTo();
-                $this->assertCount(1, $toAddresses);
-                $this->assertEquals('test@example.com', $toAddresses[0]->getAddress());
+                        $toAddresses = $email->getTo();
+                        $this->assertCount(1, $toAddresses);
+                        $this->assertEquals('test@example.com', $toAddresses[0]->getAddress());
 
-                $fromAddresses = $email->getFrom();
-                $this->assertCount(1, $fromAddresses);
-                $this->assertEquals('admin@example.com', $fromAddresses[0]->getAddress());
-                $this->assertEquals('Admin Team', $fromAddresses[0]->getName());
+                        $fromAddresses = $email->getFrom();
+                        $this->assertCount(1, $fromAddresses);
+                        $this->assertEquals('admin@example.com', $fromAddresses[0]->getAddress());
+                        $this->assertEquals('Admin Team', $fromAddresses[0]->getName());
 
-                return true;
-            }));
+                        return true;
+                    }
+                )
+            );
 
-        $this->commandTester->execute([
+        $this->commandTester->execute(
+            [
             'recipient' => 'test@example.com',
             '--sync' => true,
-        ]);
+            ]
+        );
 
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Sending test email synchronously to', $output);
@@ -121,9 +133,11 @@ class SendTestEmailCommandTest extends TestCase
         $this->emailService->expects($this->never())
             ->method('sendEmailSync');
 
-        $this->commandTester->execute([
+        $this->commandTester->execute(
+            [
             '--sync' => true,
-        ]);
+            ]
+        );
 
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Recipient email address not provided', $output);
@@ -138,9 +152,11 @@ class SendTestEmailCommandTest extends TestCase
         $this->emailService->expects($this->never())
             ->method('sendEmailSync');
 
-        $this->commandTester->execute([
+        $this->commandTester->execute(
+            [
             'recipient' => 'invalid-email',
-        ]);
+            ]
+        );
 
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Invalid email address', $output);
@@ -155,10 +171,12 @@ class SendTestEmailCommandTest extends TestCase
         $this->emailService->expects($this->never())
             ->method('sendEmailSync');
 
-        $this->commandTester->execute([
+        $this->commandTester->execute(
+            [
             'recipient' => 'invalid-email',
             '--sync' => true,
-        ]);
+            ]
+        );
 
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Invalid email address', $output);
@@ -172,9 +190,11 @@ class SendTestEmailCommandTest extends TestCase
             ->method('sendEmail')
             ->willThrowException(new Exception('Test exception'));
 
-        $this->commandTester->execute([
+        $this->commandTester->execute(
+            [
             'recipient' => 'test@example.com',
-        ]);
+            ]
+        );
 
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Failed to send test email', $output);
@@ -189,10 +209,12 @@ class SendTestEmailCommandTest extends TestCase
             ->method('sendEmailSync')
             ->willThrowException(new Exception('Test sync exception'));
 
-        $this->commandTester->execute([
+        $this->commandTester->execute(
+            [
             'recipient' => 'test@example.com',
             '--sync' => true,
-        ]);
+            ]
+        );
 
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Failed to send test email', $output);

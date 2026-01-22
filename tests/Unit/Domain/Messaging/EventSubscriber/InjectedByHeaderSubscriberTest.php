@@ -61,10 +61,12 @@ class InjectedByHeaderSubscriberTest extends TestCase
     public function testNoHeaderWhenRunningInCliEvenWithRequestAndEmail(): void
     {
         // In PHPUnit, PHP_SAPI is typically "cli"; ensure we have a Request to pass other guards
-        $request = new Request(server: [
+        $request = new Request(
+            server: [
             'REQUEST_TIME' => time(),
             'REMOTE_ADDR' => '127.0.0.1',
-        ]);
+            ]
+        );
         $requestStack = new RequestStack();
         $requestStack->push($request);
 

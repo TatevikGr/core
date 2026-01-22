@@ -25,9 +25,11 @@ final class SubscriberAttributeChangeSetProviderTest extends TestCase
         $this->resolver = $this->createMock(AttributeValueResolver::class);
         $this->resolver
             ->method('resolve')
-            ->willReturnCallback(function (SubscriberAttributeValue $attr) {
-                return $attr->getValue();
-            });
+            ->willReturnCallback(
+                function (SubscriberAttributeValue $attr) {
+                    return $attr->getValue();
+                }
+            );
 
         $this->repository = $this->createMock(SubscriberAttributeValueRepository::class);
 

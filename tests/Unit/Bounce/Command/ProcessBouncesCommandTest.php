@@ -92,9 +92,11 @@ class ProcessBouncesCommandTest extends TestCase
         $this->protocolProcessor->method('getProtocol')->willReturn('pop');
         $this->protocolProcessor->expects($this->never())->method('process');
 
-        $this->commandTester->execute([
+        $this->commandTester->execute(
+            [
             '--protocol' => 'mbox',
-        ]);
+            ]
+        );
 
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Unsupported protocol: mbox', $output);
@@ -118,11 +120,13 @@ class ProcessBouncesCommandTest extends TestCase
             ->expects($this->once())
             ->method('process')
             ->with(
-                $this->callback(function ($input) {
-                    return $input->getOption('protocol') === 'pop'
+                $this->callback(
+                    function ($input) {
+                        return $input->getOption('protocol') === 'pop'
                         && $input->getOption('test') === false
                         && $input->getOption('purge-unprocessed') === false;
-                }),
+                    }
+                ),
                 $this->anything()
             )
             ->willReturn('downloaded 10 messages');
@@ -197,9 +201,11 @@ class ProcessBouncesCommandTest extends TestCase
             ->willReturn(1);
         $this->protocolProcessor->method('getProtocol')->willReturn('pop');
 
-        $this->commandTester->execute([
+        $this->commandTester->execute(
+            [
             '--force' => true,
-        ]);
+            ]
+        );
 
         $this->assertSame(0, $this->commandTester->getStatusCode());
     }
@@ -214,9 +220,11 @@ class ProcessBouncesCommandTest extends TestCase
         $this->advancedRulesProcessor->expects($this->never())->method('process');
         $this->consecutiveBounceHandler->expects($this->never())->method('handle');
 
-        $this->commandTester->execute([
+        $this->commandTester->execute(
+            [
             '--force' => true,
-        ]);
+            ]
+        );
 
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Could not apply force lock. Aborting.', $output);
@@ -243,9 +251,11 @@ class ProcessBouncesCommandTest extends TestCase
             ->method('process')
             ->with($this->anything(), 50);
 
-        $this->commandTester->execute([
+        $this->commandTester->execute(
+            [
             '--rules-batch-size' => 50,
-        ]);
+            ]
+        );
 
         $this->assertSame(0, $this->commandTester->getStatusCode());
     }

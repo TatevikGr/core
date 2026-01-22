@@ -39,10 +39,12 @@ class SystemMailConstructorTest extends TestCase
     private function createConstructor(bool $poweredByPhplist = false): SystemMailContentBuilder
     {
         // Defaults needed by constructor
-        $this->configProvider->method('getValue')->willReturnMap([
+        $this->configProvider->method('getValue')->willReturnMap(
+            [
             [ConfigOption::PoweredByText, '<b>Powered</b> by phpList'],
             [ConfigOption::SystemMessageTemplate, null],
-        ]);
+            ]
+        );
 
         return new SystemMailContentBuilder(
             html2Text: $this->html2Text,
@@ -91,11 +93,13 @@ class SystemMailConstructorTest extends TestCase
     public function testTemplateWithSignaturePlaceholderUsesPoweredByImageWhenFlagFalse(): void
     {
         // Configure template usage
-        $this->configProvider->method('getValue')->willReturnMap([
+        $this->configProvider->method('getValue')->willReturnMap(
+            [
             [ConfigOption::PoweredByText, '<b>Powered</b>'],
             [ConfigOption::SystemMessageTemplate, '10'],
             [ConfigOption::PoweredByImage, '<img alt="" src="/assets/power-phplist.png" />'],
-        ]);
+            ]
+        );
 
         $template = new Template('sys-template');
         $template->setContent('<html><body>[SUBJECT]: [CONTENT] [SIGNATURE]</body></html>');
@@ -138,10 +142,12 @@ class SystemMailConstructorTest extends TestCase
     public function testTemplateWithoutSignatureAppendsPoweredByTextAndBeforeBodyEndWhenHtml(): void
     {
         // Configure template usage with poweredByPhplist=true (use text snippet instead of image)
-        $this->configProvider->method('getValue')->willReturnMap([
+        $this->configProvider->method('getValue')->willReturnMap(
+            [
             [ConfigOption::PoweredByText, '<i>PB</i>'],
             [ConfigOption::SystemMessageTemplate, '11'],
-        ]);
+            ]
+        );
 
         $template = new Template('sys-template');
         $template->setContent('<html><body>[CONTENT]</body></html>');

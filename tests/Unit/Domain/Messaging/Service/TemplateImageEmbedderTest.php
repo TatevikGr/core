@@ -35,12 +35,14 @@ class TemplateImageEmbedderTest extends TestCase
         mkdir($this->documentRoot, 0777, true);
 
         // Reasonable defaults for options used in code
-        $this->configProvider->method('getValue')->willReturnMap([
+        $this->configProvider->method('getValue')->willReturnMap(
+            [
             [ConfigOption::SystemMessageTemplate, '0'],
             [ConfigOption::Website, 'https://example.com'],
             [ConfigOption::UploadImageRoot, $this->documentRoot . '/upload/'],
             [ConfigOption::PageRoot, '/'],
-        ]);
+            ]
+        );
     }
 
     protected function tearDown(): void
@@ -92,12 +94,14 @@ class TemplateImageEmbedderTest extends TestCase
 
     public function testExternalImagesEmbeddedAndSameHostLeftAlone(): void
     {
-        $this->configProvider->method('getValue')->willReturnMap([
+        $this->configProvider->method('getValue')->willReturnMap(
+            [
             [ConfigOption::SystemMessageTemplate, '0'],
             [ConfigOption::Website, 'https://example.com'],
             [ConfigOption::UploadImageRoot, $this->documentRoot . '/upload/'],
             [ConfigOption::PageRoot, '/'],
-        ]);
+            ]
+        );
 
         $html = '<p><img src="https://cdn.other.org/pic.jpg"> and '
               . '<img src="https://example.com/local.jpg"></p>';
@@ -130,12 +134,14 @@ class TemplateImageEmbedderTest extends TestCase
     public function testTemplateImagesAreEmbeddedIncludingPoweredBySpecialCase(): void
     {
         // Template id used
-        $this->configProvider->method('getValue')->willReturnMap([
+        $this->configProvider->method('getValue')->willReturnMap(
+            [
             [ConfigOption::SystemMessageTemplate, '42'],
             [ConfigOption::Website, 'https://example.com'],
             [ConfigOption::UploadImageRoot, $this->documentRoot . '/upload/'],
             [ConfigOption::PageRoot, '/'],
-        ]);
+            ]
+        );
 
         $html = '<div><img src="/assets/logo.jpg"><img src="powerphplist.png"></div>';
 
@@ -148,16 +154,18 @@ class TemplateImageEmbedderTest extends TestCase
         $tplImg2->method('getData')->willReturn(base64_encode('IMG2'));
 
         $this->templateImageRepository->method('findByTemplateIdAndFilename')
-            ->willReturnCallback(function (int $tplId, string $filename) use ($tplImg1, $tplImg2) {
-                if ($filename === '/assets/logo.jpg') {
-                    // In current implementation, first pass checks templateId as provided
-                    return $tplImg1;
+            ->willReturnCallback(
+                function (int $tplId, string $filename) use ($tplImg1, $tplImg2) {
+                    if ($filename === '/assets/logo.jpg') {
+                        // In current implementation, first pass checks templateId as provided
+                        return $tplImg1;
+                    }
+                    if ($filename === 'powerphplist.png') {
+                        return $tplImg2;
+                    }
+                    return null;
                 }
-                if ($filename === 'powerphplist.png') {
-                    return $tplImg2;
-                }
-                return null;
-            });
+            );
 
         $embedder = $this->createEmbedder();
         $out = $embedder($html, 7);
@@ -177,12 +185,14 @@ class TemplateImageEmbedderTest extends TestCase
         $filePath = $uploadDir . '/image/pic.png';
         file_put_contents($filePath, 'PNGDATA');
 
-        $this->configProvider->method('getValue')->willReturnMap([
+        $this->configProvider->method('getValue')->willReturnMap(
+            [
             [ConfigOption::SystemMessageTemplate, '0'],
             [ConfigOption::Website, 'https://example.com'],
             [ConfigOption::UploadImageRoot, $this->documentRoot . '/upload/'],
             [ConfigOption::PageRoot, '/'],
-        ]);
+            ]
+        );
 
         // Expect configManager->create called when a path with non-null config is used
         $this->configManager->expects($this->atLeastOnce())
@@ -201,12 +211,14 @@ class TemplateImageEmbedderTest extends TestCase
 
     public function testNoOpWhenFlagsOffAndNoTemplateMatch(): void
     {
-        $this->configProvider->method('getValue')->willReturnMap([
+        $this->configProvider->method('getValue')->willReturnMap(
+            [
             [ConfigOption::SystemMessageTemplate, '0'],
             [ConfigOption::Website, 'https://example.com'],
             [ConfigOption::UploadImageRoot, $this->documentRoot . '/upload/'],
             [ConfigOption::PageRoot, '/'],
-        ]);
+            ]
+        );
 
         // Neither external nor uploaded embedding enabled; repository returns null
         $this->templateImageRepository->method('findByTemplateIdAndFilename')->willReturn(null);
@@ -221,12 +233,14 @@ class TemplateImageEmbedderTest extends TestCase
 
     public function testUnknownExtensionIsIgnored(): void
     {
-        $this->configProvider->method('getValue')->willReturnMap([
+        $this->configProvider->method('getValue')->willReturnMap(
+            [
             [ConfigOption::SystemMessageTemplate, 0],
             [ConfigOption::Website, 'https://example.com'],
             [ConfigOption::UploadImageRoot, $this->documentRoot . '/upload/'],
             [ConfigOption::PageRoot, '/'],
-        ]);
+            ]
+        );
 
         $html = '<img src="/assets/vector.svg">';
         $embedder = $this->createEmbedder(embedExternal: true, embedUploaded: true);

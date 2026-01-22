@@ -57,11 +57,13 @@ class BlacklistEmailAndDeleteBounceHandlerTest extends TestCase
         );
         $this->bounceManager->expects($this->once())->method('delete')->with($bounce);
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'ruleId' => 9,
             'bounce' => $bounce,
-        ]);
+            ]
+        );
     }
 
     public function testHandleSkipsBlacklistAndHistoryWhenNoSubscriberButDeletesBounce(): void
@@ -72,9 +74,11 @@ class BlacklistEmailAndDeleteBounceHandlerTest extends TestCase
         $this->historyManager->expects($this->never())->method('addHistory');
         $this->bounceManager->expects($this->once())->method('delete')->with($bounce);
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'ruleId' => 9,
             'bounce' => $bounce,
-        ]);
+            ]
+        );
     }
 }

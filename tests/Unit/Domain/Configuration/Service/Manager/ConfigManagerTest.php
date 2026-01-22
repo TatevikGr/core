@@ -69,12 +69,16 @@ class ConfigManagerTest extends TestCase
 
         $configRepository->expects($this->once())
             ->method('persist')
-            ->with($this->callback(function (Config $config) {
-                return $config->getKey() === 'test_key' &&
-                    $config->getValue() === 'test_value' &&
-                    $config->isEditable() === true &&
-                    $config->getType() === 'test_type';
-            }));
+            ->with(
+                $this->callback(
+                    function (Config $config) {
+                        return $config->getKey() === 'test_key' &&
+                        $config->getValue() === 'test_value' &&
+                        $config->isEditable() === true &&
+                        $config->getType() === 'test_type';
+                    }
+                )
+            );
 
         $manager->create('test_key', 'test_value', true, 'test_type');
     }

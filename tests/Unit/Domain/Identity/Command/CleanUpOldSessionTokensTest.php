@@ -29,9 +29,11 @@ final class CleanUpOldSessionTokensTest extends TestCase
         $removed = [];
         $em->expects($this->exactly(\count($expired)))
             ->method('remove')
-            ->willReturnCallback(function (object $o) use (&$removed) {
-                $removed[] = $o;
-            });
+            ->willReturnCallback(
+                function (object $o) use (&$removed) {
+                    $removed[] = $o;
+                }
+            );
 
         $em->expects($this->once())
             ->method('flush');

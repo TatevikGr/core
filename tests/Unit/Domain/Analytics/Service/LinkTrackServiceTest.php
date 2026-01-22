@@ -70,12 +70,14 @@ class LinkTrackServiceTest extends TestCase
 
         $this->linkTrackRepository->expects(self::exactly(2))
             ->method('persist')
-            ->willReturnCallback(function (LinkTrack $linkTrack) use ($messageId, $userId) {
-                self::assertSame($messageId, $linkTrack->getMessageId());
-                self::assertSame($userId, $linkTrack->getUserId());
-                self::assertContains($linkTrack->getUrl(), ['https://example.com', 'https://test.com']);
-                return null;
-            });
+            ->willReturnCallback(
+                function (LinkTrack $linkTrack) use ($messageId, $userId) {
+                    self::assertSame($messageId, $linkTrack->getMessageId());
+                    self::assertSame($userId, $linkTrack->getUserId());
+                    self::assertContains($linkTrack->getUrl(), ['https://example.com', 'https://test.com']);
+                    return null;
+                }
+            );
 
         $result = $this->subject->extractAndSaveLinks($messagePrecacheDto, $userId, $messageId);
 
@@ -103,12 +105,14 @@ class LinkTrackServiceTest extends TestCase
 
         $this->linkTrackRepository->expects(self::exactly(2))
             ->method('persist')
-            ->willReturnCallback(function (LinkTrack $linkTrack) use ($messageId, $userId) {
-                self::assertSame($messageId, $linkTrack->getMessageId());
-                self::assertSame($userId, $linkTrack->getUserId());
-                self::assertContains($linkTrack->getUrl(), ['https://example.com', 'https://footer.com']);
-                return null;
-            });
+            ->willReturnCallback(
+                function (LinkTrack $linkTrack) use ($messageId, $userId) {
+                    self::assertSame($messageId, $linkTrack->getMessageId());
+                    self::assertSame($userId, $linkTrack->getUserId());
+                    self::assertContains($linkTrack->getUrl(), ['https://example.com', 'https://footer.com']);
+                    return null;
+                }
+            );
 
         $result = $this->subject->extractAndSaveLinks($messagePrecacheDto, $userId, $messageId);
 
@@ -134,12 +138,14 @@ class LinkTrackServiceTest extends TestCase
 
         $this->linkTrackRepository->expects(self::once())
             ->method('persist')
-            ->willReturnCallback(function (LinkTrack $linkTrack) use ($messageId, $userId) {
-                self::assertSame($messageId, $linkTrack->getMessageId());
-                self::assertSame($userId, $linkTrack->getUserId());
-                self::assertSame('https://example.com', $linkTrack->getUrl());
-                return null;
-            });
+            ->willReturnCallback(
+                function (LinkTrack $linkTrack) use ($messageId, $userId) {
+                    self::assertSame($messageId, $linkTrack->getMessageId());
+                    self::assertSame($userId, $linkTrack->getUserId());
+                    self::assertSame('https://example.com', $linkTrack->getUrl());
+                    return null;
+                }
+            );
 
         $result = $this->subject->extractAndSaveLinks($messagePrecacheDto, $userId, $messageId);
 
@@ -164,12 +170,14 @@ class LinkTrackServiceTest extends TestCase
 
         $this->linkTrackRepository->expects(self::once())
             ->method('persist')
-            ->willReturnCallback(function (LinkTrack $linkTrack) use ($messageId, $userId) {
-                self::assertSame($messageId, $linkTrack->getMessageId());
-                self::assertSame($userId, $linkTrack->getUserId());
-                self::assertSame('https://footer.com', $linkTrack->getUrl());
-                return null;
-            });
+            ->willReturnCallback(
+                function (LinkTrack $linkTrack) use ($messageId, $userId) {
+                    self::assertSame($messageId, $linkTrack->getMessageId());
+                    self::assertSame($userId, $linkTrack->getUserId());
+                    self::assertSame('https://footer.com', $linkTrack->getUrl());
+                    return null;
+                }
+            );
 
         $result = $this->subject->extractAndSaveLinks($messagePrecacheDto, $userId, $messageId);
 

@@ -25,9 +25,11 @@ class AttributeDefinitionManagerTest extends TestCase
         $repository = $this->createMock(SubscriberAttributeDefinitionRepository::class);
         $validator = $this->createMock(AttributeTypeValidator::class);
         $bus = $this->createMock(MessageBusInterface::class);
-        $bus->method('dispatch')->willReturnCallback(function ($message) {
-            return new Envelope($message);
-        });
+        $bus->method('dispatch')->willReturnCallback(
+            function ($message) {
+                return new Envelope($message);
+            }
+        );
         $dynamicTablesManager = new DynamicListAttrTablesManager(
             definitionRepository: $this->createMock(SubscriberAttributeDefinitionRepository::class),
             messageBus: $bus,

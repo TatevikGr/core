@@ -132,12 +132,16 @@ class RemotePageFetcherTest extends TestCase
             ->with($this->isInstanceOf(UrlCache::class));
 
         $this->cache->expects($this->once())->method('set')
-            ->with(md5($url), $this->callback(function ($v) {
-                return is_array($v)
-                    && isset($v['fetched'], $v['content'])
-                    && $v['content'] === 'rewritten:<h1>hello</h1>'
-                    && is_int($v['fetched']);
-            }));
+            ->with(
+                md5($url), $this->callback(
+                    function ($v) {
+                        return is_array($v)
+                        && isset($v['fetched'], $v['content'])
+                        && $v['content'] === 'rewritten:<h1>hello</h1>'
+                        && is_int($v['fetched']);
+                    }
+                )
+            );
 
         $this->eventLogManager->expects($this->atLeastOnce())->method('log');
 

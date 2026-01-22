@@ -11,10 +11,12 @@ class ConfigProviderTest extends TestCase
 {
     public function testReturnsConfigValueIfExists(): void
     {
-        $provider = new ParameterProvider([
+        $provider = new ParameterProvider(
+            [
             'site_name' => 'phpList',
             'debug' => true,
-        ]);
+            ]
+        );
 
         $this->assertSame('phpList', $provider->get('site_name'));
         $this->assertTrue($provider->get('debug'));
@@ -22,9 +24,11 @@ class ConfigProviderTest extends TestCase
 
     public function testReturnsDefaultIfKeyMissing(): void
     {
-        $provider = new ParameterProvider([
+        $provider = new ParameterProvider(
+            [
             'site_name' => 'phpList',
-        ]);
+            ]
+        );
 
         $this->assertNull($provider->get('nonexistent'));
         $this->assertSame('default', $provider->get('nonexistent', 'default'));

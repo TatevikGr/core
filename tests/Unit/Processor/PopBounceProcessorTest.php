@@ -36,29 +36,33 @@ class PopBounceProcessorTest extends TestCase
         $translator = new Translator('en');
         $processor = new PopBounceProcessor($this->service, 'pop.example.com', 110, 'INBOX, ,Custom', $translator);
 
-        $this->input->method('getOption')->willReturnMap([
+        $this->input->method('getOption')->willReturnMap(
+            [
             ['test', true],
             ['maximum', 100],
-        ]);
+            ]
+        );
 
         $this->io->expects($this->exactly(3))->method('section');
         $this->io->expects($this->exactly(3))->method('writeln');
 
         $this->service->expects($this->exactly(3))
             ->method('processMailbox')
-            ->willReturnCallback(function (string $mailbox, int $max, bool $test) {
-                $expectedThird = '{pop.example.com:110}Custom';
-                $expectedFirst = '{pop.example.com:110}INBOX';
-                $this->assertSame(100, $max);
-                $this->assertTrue($test);
-                if ($mailbox === $expectedFirst) {
-                    return 'A';
+            ->willReturnCallback(
+                function (string $mailbox, int $max, bool $test) {
+                    $expectedThird = '{pop.example.com:110}Custom';
+                    $expectedFirst = '{pop.example.com:110}INBOX';
+                    $this->assertSame(100, $max);
+                    $this->assertTrue($test);
+                    if ($mailbox === $expectedFirst) {
+                        return 'A';
+                    }
+                    if ($mailbox === $expectedThird) {
+                        return 'C';
+                    }
+                    $this->fail('Unexpected mailbox: ' . $mailbox);
                 }
-                if ($mailbox === $expectedThird) {
-                    return 'C';
-                }
-                $this->fail('Unexpected mailbox: ' . $mailbox);
-            });
+            );
 
         $result = $processor->process($this->input, $this->io);
         $this->assertSame('AAC', $result);

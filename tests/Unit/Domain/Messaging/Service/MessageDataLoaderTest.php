@@ -33,7 +33,8 @@ class MessageDataLoaderTest extends TestCase
     {
         $defaultMessageAge = 3600;
 
-        $this->config->method('getValue')->willReturnMap([
+        $this->config->method('getValue')->willReturnMap(
+            [
             [ConfigOption::MessageFromAddress, 'from@example.com'],
             [ConfigOption::AdminAddress, 'admin@example.com'],
             [ConfigOption::DefaultMessageTemplate, '123'],
@@ -42,7 +43,8 @@ class MessageDataLoaderTest extends TestCase
             [ConfigOption::NotifyStartDefault, 'start@example.com'],
             [ConfigOption::NotifyEndDefault, 'end@example.com'],
             [ConfigOption::AlwaysAddGoogleTracking, '1'],
-        ]);
+            ]
+        );
 
         $messageId = 10;
 
@@ -50,11 +52,13 @@ class MessageDataLoaderTest extends TestCase
         $this->messageRepository
             ->method('getNonEmptyFields')
             ->with($messageId)
-            ->willReturn([
+            ->willReturn(
+                [
                 'subject' => '(no title)',
                 'message' => 'Hello [URL:https://example.org/p]',
                 'fromfield' => '',
-            ]);
+                ]
+            );
 
         // Stored message data rows (repository)
         $md1 = (new MessageData())->setId($messageId)->setName('ashtml')->setData('1');
@@ -70,14 +74,16 @@ class MessageDataLoaderTest extends TestCase
         $message = $this->createMock(Message::class);
         $message->method('getId')->willReturn($messageId);
         $message->method('getListMessages')->willReturn(
-            new ArrayCollection([
+            new ArrayCollection(
+                [
                 new class {
                     public function getListId(): int
                     {
                         return 42;
                     }
                 },
-            ])
+                ]
+            )
         );
 
         $loader = new MessageDataLoader(
@@ -123,14 +129,16 @@ class MessageDataLoaderTest extends TestCase
         // finishsending should be now + defaultMessageAge (allow small drift)
         $fs = $result['finishsending'];
         $this->assertIsArray($fs);
-        $fsTimestamp = strtotime(sprintf(
-            '%s-%s-%s %s:%s:00',
-            $fs['year'],
-            $fs['month'],
-            $fs['day'],
-            $fs['hour'],
-            $fs['minute']
-        ));
+        $fsTimestamp = strtotime(
+            sprintf(
+                '%s-%s-%s %s:%s:00',
+                $fs['year'],
+                $fs['month'],
+                $fs['day'],
+                $fs['hour'],
+                $fs['minute']
+            )
+        );
 
         $expectedMin = $before + $defaultMessageAge - 120;
         $expectedMax = $after + $defaultMessageAge + 120;

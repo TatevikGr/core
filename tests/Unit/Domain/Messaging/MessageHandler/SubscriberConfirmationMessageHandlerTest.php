@@ -36,18 +36,22 @@ class SubscriberConfirmationMessageHandlerTest extends TestCase
 
         $this->emailService->expects($this->once())
             ->method('sendEmail')
-            ->with($this->callback(function (Email $email) use ($subscriberEmail, $uniqueId) {
-                $this->assertEquals([$subscriberEmail], $this->getEmailAddresses($email->getTo()));
-                $this->assertEquals('Please confirm your subscription', $email->getSubject());
+            ->with(
+                $this->callback(
+                    function (Email $email) use ($subscriberEmail, $uniqueId) {
+                        $this->assertEquals([$subscriberEmail], $this->getEmailAddresses($email->getTo()));
+                        $this->assertEquals('Please confirm your subscription', $email->getSubject());
 
-                $textContent = $email->getTextBody();
-                $this->assertStringContainsString('Thank you for subscribing', $textContent);
-                $this->assertStringContainsString($this->confirmationUrl . '?uniqueId=' . $uniqueId, $textContent);
+                        $textContent = $email->getTextBody();
+                        $this->assertStringContainsString('Thank you for subscribing', $textContent);
+                        $this->assertStringContainsString($this->confirmationUrl . '?uniqueId=' . $uniqueId, $textContent);
 
-                $this->assertEmpty($email->getHtmlBody());
+                        $this->assertEmpty($email->getHtmlBody());
 
-                return true;
-            }));
+                        return true;
+                    }
+                )
+            );
 
         $this->handler->__invoke($message);
     }
@@ -60,21 +64,25 @@ class SubscriberConfirmationMessageHandlerTest extends TestCase
 
         $this->emailService->expects($this->once())
             ->method('sendEmail')
-            ->with($this->callback(function (Email $email) use ($subscriberEmail, $uniqueId) {
-                $this->assertEquals([$subscriberEmail], $this->getEmailAddresses($email->getTo()));
-                $this->assertEquals('Please confirm your subscription', $email->getSubject());
+            ->with(
+                $this->callback(
+                    function (Email $email) use ($subscriberEmail, $uniqueId) {
+                        $this->assertEquals([$subscriberEmail], $this->getEmailAddresses($email->getTo()));
+                        $this->assertEquals('Please confirm your subscription', $email->getSubject());
 
-                $textContent = $email->getTextBody();
-                $this->assertStringContainsString('Thank you for subscribing', $textContent);
-                $this->assertStringContainsString($this->confirmationUrl . '?uniqueId=' . $uniqueId, $textContent);
+                        $textContent = $email->getTextBody();
+                        $this->assertStringContainsString('Thank you for subscribing', $textContent);
+                        $this->assertStringContainsString($this->confirmationUrl . '?uniqueId=' . $uniqueId, $textContent);
 
-                $htmlContent = $email->getHtmlBody();
-                $this->assertStringContainsString('<p>Thank you for subscribing!</p>', $htmlContent);
-                $linkStart = '<a href="' . $this->confirmationUrl . '?uniqueId=' . $uniqueId . '">';
-                $this->assertStringContainsString($linkStart, $htmlContent);
+                        $htmlContent = $email->getHtmlBody();
+                        $this->assertStringContainsString('<p>Thank you for subscribing!</p>', $htmlContent);
+                        $linkStart = '<a href="' . $this->confirmationUrl . '?uniqueId=' . $uniqueId . '">';
+                        $this->assertStringContainsString($linkStart, $htmlContent);
 
-                return true;
-            }));
+                        return true;
+                    }
+                )
+            );
 
         $this->handler->__invoke($message);
     }
@@ -84,8 +92,10 @@ class SubscriberConfirmationMessageHandlerTest extends TestCase
      */
     private function getEmailAddresses(array $addresses): array
     {
-        return array_map(function ($address) {
-            return $address->getAddress();
-        }, $addresses);
+        return array_map(
+            function ($address) {
+                return $address->getAddress();
+            }, $addresses
+        );
     }
 }

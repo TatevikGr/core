@@ -45,11 +45,15 @@ class ListMessageManagerTest extends TestCase
         
         $this->entityManager->expects($this->once())
             ->method('persist')
-            ->with($this->callback(function (ListMessage $listMessage) {
-                return $listMessage->getMessage()->getId() === 1
-                    && $listMessage->getList()->getId() === 2
-                    && $listMessage->getEntered() instanceof DateTime;
-            }));
+            ->with(
+                $this->callback(
+                    function (ListMessage $listMessage) {
+                        return $listMessage->getMessage()->getId() === 1
+                        && $listMessage->getList()->getId() === 2
+                        && $listMessage->getEntered() instanceof DateTime;
+                    }
+                )
+            );
             
         $result = $this->manager->associateMessageWithList($message, $subscriberList);
         
@@ -111,11 +115,15 @@ class ListMessageManagerTest extends TestCase
         // We expect associateMessageWithList to be called twice, once for each list
         $this->entityManager->expects($this->exactly(2))
             ->method('persist')
-            ->with($this->callback(function (ListMessage $listMessage) {
-                return $listMessage->getMessage()->getId() === 1
-                    && ($listMessage->getList()->getId() === 2 || $listMessage->getList()->getId() === 3)
-                    && $listMessage->getEntered() instanceof DateTime;
-            }));
+            ->with(
+                $this->callback(
+                    function (ListMessage $listMessage) {
+                        return $listMessage->getMessage()->getId() === 1
+                        && ($listMessage->getList()->getId() === 2 || $listMessage->getList()->getId() === 3)
+                        && $listMessage->getEntered() instanceof DateTime;
+                    }
+                )
+            );
             
         $this->manager->associateMessageWithLists($message, [$subscriberList1, $subscriberList2]);
     }

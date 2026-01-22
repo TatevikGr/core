@@ -39,10 +39,12 @@ class SubscriptionConfirmationMessageHandlerTest extends TestCase
         $configProvider
             ->expects($this->exactly(2))
             ->method('getValue')
-            ->willReturnMap([
+            ->willReturnMap(
+                [
                 [ConfigOption::SubscribeEmailSubject, 'Please confirm your subscription'],
                 [ConfigOption::SubscribeMessage, 'Hi {{name}}, you subscribed to: [LISTS]'],
-            ]);
+                ]
+            );
 
         $message = new SubscriptionConfirmationMessage(
             email: 'alice@example.com',
@@ -61,28 +63,34 @@ class SubscriptionConfirmationMessageHandlerTest extends TestCase
         $listB->method('getName')->willReturn('Security Advisories');
 
         $listRepo->method('find')
-            ->willReturnCallback(function (int $id) use ($listA, $listB) {
-                return match ($id) {
-                    10 => $listA,
-                    11 => $listB,
-                    default => null
-                };
-            });
+            ->willReturnCallback(
+                function (int $id) use ($listA, $listB) {
+                    return match ($id) {
+                        10 => $listA,
+                        11 => $listB,
+                        default => null
+                    };
+                }
+            );
 
         // Capture the Email object passed to EmailService
         $emailService->expects($this->once())
             ->method('sendEmail')
-            ->with($this->callback(function (Email $email): bool {
-                $addresses = $email->getTo();
-                if (count($addresses) !== 1 || $addresses[0]->getAddress() !== 'alice@example.com') {
-                    return false;
-                }
-                if ($email->getSubject() !== 'Please confirm your subscription') {
-                    return false;
-                }
-                $body = $email->getTextBody();
-                return $body === 'Hi Alice, you subscribed to: Releases, Security Advisories';
-            }));
+            ->with(
+                $this->callback(
+                    function (Email $email): bool {
+                        $addresses = $email->getTo();
+                        if (count($addresses) !== 1 || $addresses[0]->getAddress() !== 'alice@example.com') {
+                            return false;
+                        }
+                        if ($email->getSubject() !== 'Please confirm your subscription') {
+                            return false;
+                        }
+                        $body = $email->getTextBody();
+                        return $body === 'Hi Alice, you subscribed to: Releases, Security Advisories';
+                    }
+                )
+            );
 
         $logger->expects($this->once())
             ->method('info')
@@ -111,10 +119,12 @@ class SubscriptionConfirmationMessageHandlerTest extends TestCase
         );
 
         $configProvider->method('getValue')
-            ->willReturnMap([
+            ->willReturnMap(
+                [
                 [ConfigOption::SubscribeEmailSubject, 'Please confirm your subscription'],
                 [ConfigOption::SubscribeMessage, 'Lists: [LISTS]'],
-            ]);
+                ]
+            );
 
         $message = $this->createMock(SubscriptionConfirmationMessage::class);
         $message->method('getEmail')->willReturn('bob@example.com');
@@ -129,10 +139,14 @@ class SubscriptionConfirmationMessageHandlerTest extends TestCase
 
         $emailService->expects($this->once())
             ->method('sendEmail')
-            ->with($this->callback(function (Email $email): bool {
-                // Intended empty replacement when no lists found -> empty string
-                return $email->getTextBody() === 'Lists: ';
-            }));
+            ->with(
+                $this->callback(
+                    function (Email $email): bool {
+                        // Intended empty replacement when no lists found -> empty string
+                        return $email->getTextBody() === 'Lists: ';
+                    }
+                )
+            );
 
         $logger->expects($this->once())
             ->method('info')

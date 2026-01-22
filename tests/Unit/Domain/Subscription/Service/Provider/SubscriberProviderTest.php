@@ -123,10 +123,12 @@ class SubscriberProviderTest extends TestCase
         $this->subscriberRepository
             ->expects($this->exactly(2))
             ->method('getSubscribersBySubscribedListId')
-            ->willReturnMap([
+            ->willReturnMap(
+                [
                 [456, [$subscriber1, $subscriber2]],
                 [789, [$subscriber2, $subscriber3]],
-            ]);
+                ]
+            );
 
         $result = $this->subscriberProvider->getSubscribersForMessage($message);
 

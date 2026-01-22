@@ -228,12 +228,15 @@ class CampaignProcessorMessageHandlerTest extends TestCase
         // campaign emails are built via campaignEmailBuilder and sent via RateLimitedCampaignMailer
         $campaignEmailBuilder = (new ReflectionClass($this->handler))
             ->getProperty('campaignEmailBuilder');
-        /** @var EmailBuilder|MockObject $campaignBuilderMock */
+        /**
+ * @var EmailBuilder|MockObject $campaignBuilderMock 
+*/
         $campaignBuilderMock = $campaignEmailBuilder->getValue($this->handler);
 
         $campaignBuilderMock->expects($this->once())
             ->method('buildPhplistEmail')
-            ->willReturn([
+            ->willReturn(
+                [
                 (new Email())
                     ->from('news@example.com')
                     ->to('test@example.com')
@@ -241,7 +244,8 @@ class CampaignProcessorMessageHandlerTest extends TestCase
                     ->text('Test text message')
                     ->html('<p>Test HTML message</p>'),
                 OutputFormat::Html
-            ]);
+                ]
+            );
 
         $this->mailer->expects($this->any())->method('send');
 
@@ -296,14 +300,18 @@ class CampaignProcessorMessageHandlerTest extends TestCase
         $campaignEmailBuilder = (new ReflectionClass($this->handler))
             ->getProperty('campaignEmailBuilder');
 
-        /** @var EmailBuilder|MockObject $campaignBuilderMock */
+        /**
+ * @var EmailBuilder|MockObject $campaignBuilderMock 
+*/
         $campaignBuilderMock = $campaignEmailBuilder->getValue($this->handler);
         $campaignBuilderMock->expects($this->once())
             ->method('buildPhplistEmail')
-            ->willReturn([
+            ->willReturn(
+                [
                 (new Email())->to('test@example.com')->subject('Test Subject')->text('x'),
                 OutputFormat::Text
-            ]);
+                ]
+            );
 
         $exception = new Exception('Test exception');
         $this->mailer->expects($this->once())
@@ -312,10 +320,12 @@ class CampaignProcessorMessageHandlerTest extends TestCase
 
         $this->logger->expects($this->once())
             ->method('error')
-            ->with('Test exception', [
+            ->with(
+                'Test exception', [
                 'subscriber_id' => 1,
                 'campaign_id' => 123,
-            ]);
+                ]
+            );
 
         $metadata->expects($this->atLeastOnce())
             ->method('setStatus');
@@ -377,7 +387,9 @@ class CampaignProcessorMessageHandlerTest extends TestCase
         // Configure builder to return emails for first two subscribers
         $campaignEmailBuilder = (new ReflectionClass($this->handler))
             ->getProperty('campaignEmailBuilder');
-        /** @var EmailBuilder|MockObject $campaignBuilderMock */
+        /**
+ * @var EmailBuilder|MockObject $campaignBuilderMock 
+*/
         $campaignBuilderMock = $campaignEmailBuilder->getValue($this->handler);
         $campaignBuilderMock->expects($this->exactly(2))
             ->method('buildPhplistEmail')

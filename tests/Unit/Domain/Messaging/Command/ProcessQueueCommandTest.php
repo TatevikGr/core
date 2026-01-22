@@ -135,10 +135,12 @@ class ProcessQueueCommandTest extends TestCase
         $this->messageBus->expects($this->once())
             ->method('dispatch')
             ->with(
-                $this->callback(function (CampaignProcessorMessage $message) use ($campaign) {
-                    $this->assertEquals($campaign->getId(), $message->getMessageId());
-                    return true;
-                }),
+                $this->callback(
+                    function (CampaignProcessorMessage $message) use ($campaign) {
+                        $this->assertEquals($campaign->getId(), $message->getMessageId());
+                        return true;
+                    }
+                ),
                 $this->equalTo([])
             )
             ->willReturn(new Envelope(new CampaignProcessorMessage($campaign->getId())));
@@ -175,18 +177,20 @@ class ProcessQueueCommandTest extends TestCase
 
         $this->messageBus->expects($this->exactly(2))
             ->method('dispatch')
-            ->willReturnCallback(function (CampaignProcessorMessage $message, array $stamps) use ($cmp1, $cmp2) {
-                static $call = 0;
-                $call++;
-                if ($call === 1) {
-                    $this->assertEquals($cmp1->getId(), $message->getMessageId());
-                } else {
-                    $this->assertEquals($cmp2->getId(), $message->getMessageId());
-                }
-                $this->assertSame([], $stamps);
+            ->willReturnCallback(
+                function (CampaignProcessorMessage $message, array $stamps) use ($cmp1, $cmp2) {
+                    static $call = 0;
+                    $call++;
+                    if ($call === 1) {
+                        $this->assertEquals($cmp1->getId(), $message->getMessageId());
+                    } else {
+                        $this->assertEquals($cmp2->getId(), $message->getMessageId());
+                    }
+                    $this->assertSame([], $stamps);
 
-                return new Envelope(new CampaignProcessorMessage($message->getMessageId()));
-            });
+                    return new Envelope(new CampaignProcessorMessage($message->getMessageId()));
+                }
+            );
 
         $this->commandTester->execute([]);
 
@@ -219,10 +223,12 @@ class ProcessQueueCommandTest extends TestCase
         $this->messageBus->expects($this->once())
             ->method('dispatch')
             ->with(
-                $this->callback(function (CampaignProcessorMessage $message) use ($campaign) {
-                    $this->assertEquals($campaign->getId(), $message->getMessageId());
-                    return true;
-                }),
+                $this->callback(
+                    function (CampaignProcessorMessage $message) use ($campaign) {
+                        $this->assertEquals($campaign->getId(), $message->getMessageId());
+                        return true;
+                    }
+                ),
                 $this->equalTo([])
             )
             ->willThrowException(new Exception());

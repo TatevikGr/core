@@ -57,7 +57,9 @@ class SubscriptionRepositoryTest extends KernelTestCase
         $creationDate = new DateTime('2016-07-22 15:01:17');
         $modificationDate = new DateTime('2016-08-23 19:50:43');
 
-        /** @var Subscription[] $result */
+        /**
+ * @var Subscription[] $result 
+*/
         $result = $this->subscriptionRepository->findAll();
 
         self::assertNotEmpty($result);
@@ -73,10 +75,14 @@ class SubscriptionRepositoryTest extends KernelTestCase
         $this->loadFixtures([SubscriberFixture::class, SubscriberListFixture::class]);
 
         $model = new Subscription();
-        /** @var Subscriber $subscriber */
+        /**
+ * @var Subscriber $subscriber 
+*/
         $subscriber = $this->subscriberRepository->find(1);
         $model->setSubscriber($subscriber);
-        /** @var SubscriberList $subscriberList */
+        /**
+ * @var SubscriberList $subscriberList 
+*/
         $subscriberList = $this->subscriberListRepository->find(1);
         $model->setSubscriberList($subscriberList);
         $expectedCreationDate = new DateTime();
@@ -91,10 +97,14 @@ class SubscriptionRepositoryTest extends KernelTestCase
         $this->loadFixtures([SubscriberFixture::class, SubscriberListFixture::class]);
 
         $model = new Subscription();
-        /** @var Subscriber $subscriber */
+        /**
+ * @var Subscriber $subscriber 
+*/
         $subscriber = $this->subscriberRepository->find(1);
         $model->setSubscriber($subscriber);
-        /** @var SubscriberList $subscriberList */
+        /**
+ * @var SubscriberList $subscriberList 
+*/
         $subscriberList = $this->subscriberListRepository->find(1);
         $model->setSubscriberList($subscriberList);
         $expectedModificationDate = new DateTime();
@@ -108,12 +118,16 @@ class SubscriptionRepositoryTest extends KernelTestCase
     {
         $this->loadFixtures([SubscriberFixture::class, SubscriberListFixture::class, SubscriptionFixture::class]);
 
-        /** @var Subscriber $subscriber */
+        /**
+ * @var Subscriber $subscriber 
+*/
         $subscriber = $this->subscriberRepository->find(1);
 
         $result = $this->subscriptionRepository->findBySubscriber($subscriber);
 
-        /** @var Subscription $subscription */
+        /**
+ * @var Subscription $subscription 
+*/
         foreach ($result as $subscription) {
             self::assertSame($subscriber, $subscription->getSubscriber());
         }
@@ -123,12 +137,16 @@ class SubscriptionRepositoryTest extends KernelTestCase
     {
         $this->loadFixtures([SubscriberFixture::class, SubscriberListFixture::class, SubscriptionFixture::class]);
 
-        /** @var SubscriberList $subscriberList */
+        /**
+ * @var SubscriberList $subscriberList 
+*/
         $subscriberList = $this->subscriberListRepository->find(1);
 
         $result = $this->subscriptionRepository->findBySubscriberList($subscriberList);
 
-        /** @var Subscription $subscription */
+        /**
+ * @var Subscription $subscription 
+*/
         foreach ($result as $subscription) {
             self::assertSame($subscriberList, $subscription->getSubscriberList());
         }
@@ -141,10 +159,14 @@ class SubscriptionRepositoryTest extends KernelTestCase
         $numberOfSaveModelsBefore = count($this->subscriptionRepository->findAll());
 
         $model = new Subscription();
-        /** @var Subscriber $subscriber */
+        /**
+ * @var Subscriber $subscriber 
+*/
         $subscriber = $this->subscriberRepository->find(1);
         $model->setSubscriber($subscriber);
-        /** @var SubscriberList $subscriber */
+        /**
+ * @var SubscriberList $subscriber 
+*/
         $subscriberList = $this->subscriberListRepository->find(1);
         $model->setSubscriberList($subscriberList);
         $this->subscriptionRepository->save($model);
@@ -156,7 +178,9 @@ class SubscriptionRepositoryTest extends KernelTestCase
     {
         $this->loadFixtures([SubscriberFixture::class, SubscriberListFixture::class, SubscriptionFixture::class]);
 
-        /** @var Subscription[] $allModels */
+        /**
+ * @var Subscription[] $allModels 
+*/
         $allModels = $this->subscriptionRepository->findAll();
         $numberOfModelsBeforeRemove = count($allModels);
         $firstModel = $allModels[0];

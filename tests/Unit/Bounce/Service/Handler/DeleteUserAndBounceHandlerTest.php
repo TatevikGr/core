@@ -43,10 +43,12 @@ class DeleteUserAndBounceHandlerTest extends TestCase
         $this->subscriberManager->expects($this->once())->method('deleteSubscriber')->with($subscriber);
         $this->bounceManager->expects($this->once())->method('delete')->with($bounce);
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'bounce' => $bounce,
-        ]);
+            ]
+        );
     }
 
     public function testHandleSkipsUserDeletionWhenNoSubscriberButDeletesBounce(): void
@@ -56,8 +58,10 @@ class DeleteUserAndBounceHandlerTest extends TestCase
         $this->subscriberManager->expects($this->never())->method('deleteSubscriber');
         $this->bounceManager->expects($this->once())->method('delete')->with($bounce);
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'bounce' => $bounce,
-        ]);
+            ]
+        );
     }
 }

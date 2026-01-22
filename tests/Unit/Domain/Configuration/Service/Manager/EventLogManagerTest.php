@@ -57,14 +57,16 @@ final class EventLogManagerTest extends TestCase
             ->with(
                 100,
                 25,
-                $this->callback(function (EventLogFilter $filter) {
-                    // Use getters to validate
-                    return method_exists($filter, 'getPage')
+                $this->callback(
+                    function (EventLogFilter $filter) {
+                        // Use getters to validate
+                        return method_exists($filter, 'getPage')
                         && $filter->getPage() === 'settings'
                         && $filter->getDateFrom() instanceof DateTimeImmutable
                         && $filter->getDateTo() instanceof DateTimeImmutable
                         && $filter->getDateFrom() <= $filter->getDateTo();
-                })
+                    }
+                )
             )
             ->willReturn($expected);
 

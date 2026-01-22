@@ -36,11 +36,13 @@ class ExtraLoaderTest extends TestCase
         $this->kernel = $bootstrap->getApplicationKernel();
         $this->kernel->boot();
 
-        $locator = new FileLocator([
+        $locator = new FileLocator(
+            [
             $this->kernel->getProjectDir() . '/src/EmptyStartPageBundle/Controller',
             $this->kernel->getProjectDir() . '/src/EmptyStartPageBundle',
             $this->kernel->getProjectDir() . '/config',
-        ]);
+            ]
+        );
 
         $attributeLoader = new AttributeRouteControllerLoader();
         $attributeDirectoryLoader = new AttributeDirectoryLoader($locator, $attributeLoader);

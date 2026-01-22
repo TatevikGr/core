@@ -67,7 +67,9 @@ class SubscriberListRepositoryTest extends KernelTestCase
         $subjectPrefix = 'phpList';
         $category = 'news';
 
-        /** @var SubscriberList $model */
+        /**
+ * @var SubscriberList $model 
+*/
         $model = $this->subscriberListRepository->find($id);
 
         self::assertSame($id, $model->getId());
@@ -151,7 +153,9 @@ class SubscriberListRepositoryTest extends KernelTestCase
 
         $id = 2;
         $subscriber = $this->subscriberRepository->find($id);
-        /** @var Subscription[] $subscriptions */
+        /**
+ * @var Subscription[] $subscriptions 
+*/
         $subscriptions = $this->subscriptionRepository->findBySubscriberList($subscriber);
 
         self::assertNotEmpty($subscriptions);
@@ -166,7 +170,9 @@ class SubscriberListRepositoryTest extends KernelTestCase
         $this->loadFixtures([SubscriberListFixture::class, SubscriberFixture::class, SubscriptionFixture::class]);
 
         $id = 2;
-        /** @var Subscriber[] $subscribers */
+        /**
+ * @var Subscriber[] $subscribers 
+*/
         $subscribers = $this->subscriberRepository->getSubscribersBySubscribedListId($id);
 
         $expectedSubscriber = $this->subscriberRepository->find(1);
@@ -182,7 +188,9 @@ class SubscriberListRepositoryTest extends KernelTestCase
         $initialNumberOfSubscriptions = count($this->subscriptionRepository->findAll());
 
         $id = 2;
-        /** @var SubscriberList $subscriberList */
+        /**
+ * @var SubscriberList $subscriberList 
+*/
         $subscriberList = $this->subscriberListRepository->findWithSubscription($id);
 
         $numberOfAssociatedSubscriptions = count($subscriberList->getSubscriptions());
@@ -201,7 +209,9 @@ class SubscriberListRepositoryTest extends KernelTestCase
     {
         $this->loadFixtures([SubscriberListFixture::class]);
 
-        /** @var SubscriberList[] $allModels */
+        /**
+ * @var SubscriberList[] $allModels 
+*/
         $allModels = $this->subscriberListRepository->findAll();
         $numberOfModelsBeforeRemove = count($allModels);
         $firstModel = $allModels[0];

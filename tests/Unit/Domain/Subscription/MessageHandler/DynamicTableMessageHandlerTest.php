@@ -39,47 +39,53 @@ class DynamicTableMessageHandlerTest extends TestCase
         $this->schemaManager
             ->expects($this->once())
             ->method('createTable')
-            ->with($this->callback(function (Table $table) use (&$capturedTable, $tableName) {
-                $capturedTable = $table;
-                // Basic checks
-                $this->assertSame($tableName, $table->getName());
-                $this->assertTrue($table->hasColumn('id'));
-                $this->assertTrue($table->hasColumn('name'));
-                $this->assertTrue($table->hasColumn('listorder'));
+            ->with(
+                $this->callback(
+                    function (Table $table) use (&$capturedTable, $tableName) {
+                        $capturedTable = $table;
+                        // Basic checks
+                        $this->assertSame($tableName, $table->getName());
+                        $this->assertTrue($table->hasColumn('id'));
+                        $this->assertTrue($table->hasColumn('name'));
+                        $this->assertTrue($table->hasColumn('listorder'));
 
-                // id column
-                $idCol = $table->getColumn('id');
-                $this->assertSame('integer', $idCol->getType()->getName());
-                $this->assertTrue($idCol->getAutoincrement());
-                $this->assertTrue($idCol->getNotnull());
+                        // id column
+                        $idCol = $table->getColumn('id');
+                        $this->assertSame('integer', $idCol->getType()->getName());
+                        $this->assertTrue($idCol->getAutoincrement());
+                        $this->assertTrue($idCol->getNotnull());
 
-                // name column
-                $nameCol = $table->getColumn('name');
-                $this->assertSame('string', $nameCol->getType()->getName());
-                $this->assertSame(255, $nameCol->getLength());
-                $this->assertFalse($nameCol->getNotnull());
+                        // name column
+                        $nameCol = $table->getColumn('name');
+                        $this->assertSame('string', $nameCol->getType()->getName());
+                        $this->assertSame(255, $nameCol->getLength());
+                        $this->assertFalse($nameCol->getNotnull());
 
-                // listorder column
-                $orderCol = $table->getColumn('listorder');
-                $this->assertSame('integer', $orderCol->getType()->getName());
-                $this->assertFalse($orderCol->getNotnull());
-                $this->assertSame(0, $orderCol->getDefault());
+                        // listorder column
+                        $orderCol = $table->getColumn('listorder');
+                        $this->assertSame('integer', $orderCol->getType()->getName());
+                        $this->assertFalse($orderCol->getNotnull());
+                        $this->assertSame(0, $orderCol->getDefault());
 
-                // Primary key
-                $this->assertSame(['id'], $table->getPrimaryKey()?->getColumns());
+                        // Primary key
+                        $this->assertSame(['id'], $table->getPrimaryKey()?->getColumns());
 
-                // Unique index on name
-                $indexName = 'uniq_' . $tableName . '_name';
-                $this->assertTrue($table->hasIndex($indexName));
-                $idx = $table->getIndex($indexName);
-                $this->assertTrue($idx->isUnique());
-                $this->assertSame(['name'], $idx->getColumns());
+                        // Unique index on name
+                        $indexName = 'uniq_' . $tableName . '_name';
+                        $this->assertTrue($table->hasIndex($indexName));
+                        $idx = $table->getIndex($indexName);
+                        $this->assertTrue($idx->isUnique());
+                        $this->assertSame(['name'], $idx->getColumns());
 
-                return true;
-            }))
-            ->willReturnCallback(function (Table $table) {
-                // no-op; we just want the assertions in the callback
-            });
+                        return true;
+                    }
+                )
+            )
+            ->willReturnCallback(
+                function (Table $table) {
+                    // no-op; we just want the assertions in the callback
+                }
+            );
 
         $handler = new DynamicTableMessageHandler($this->schemaManager);
         $handler($message);
@@ -142,10 +148,12 @@ class DynamicTableMessageHandlerTest extends TestCase
         $this->schemaManager
             ->expects($this->once())
             ->method('createTable')
-            ->willThrowException(new TableExistsException(
-                new FakeDriverException('already exists', '42P07'),
-                null
-            ));
+            ->willThrowException(
+                new TableExistsException(
+                    new FakeDriverException('already exists', '42P07'),
+                    null
+                )
+            );
 
         $handler = new DynamicTableMessageHandler($this->schemaManager);
 

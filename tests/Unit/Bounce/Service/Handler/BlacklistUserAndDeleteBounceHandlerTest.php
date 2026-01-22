@@ -57,12 +57,14 @@ class BlacklistUserAndDeleteBounceHandlerTest extends TestCase
         );
         $this->bounceManager->expects($this->once())->method('delete')->with($bounce);
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'blacklisted' => false,
             'ruleId' => 13,
             'bounce' => $bounce,
-        ]);
+            ]
+        );
     }
 
     public function testHandleSkipsBlacklistAndHistoryWhenNoSubscriberOrAlreadyBlacklistedButDeletesBounce(): void
@@ -75,18 +77,22 @@ class BlacklistUserAndDeleteBounceHandlerTest extends TestCase
         $this->bounceManager->expects($this->exactly(2))->method('delete')->with($bounce);
 
         // Already blacklisted
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'blacklisted' => true,
             'ruleId' => 13,
             'bounce' => $bounce,
-        ]);
+            ]
+        );
 
         // No subscriber
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'blacklisted' => false,
             'ruleId' => 13,
             'bounce' => $bounce,
-        ]);
+            ]
+        );
     }
 }

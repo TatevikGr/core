@@ -82,13 +82,15 @@ class SystemInfoCollectorTest extends TestCase
         $collector = new SystemInfoCollector($this->requestStack);
         $string = $collector->collectAsString();
 
-        $expected = "\n" . implode("\n", [
+        $expected = "\n" . implode(
+            "\n", [
             'HTTP_USER_AGENT = UA',
             'HTTP_REFERER = https://ref.example',
             'REMOTE_ADDR = 192.0.2.5',
             'REQUEST_URI = /abc',
             'HTTP_X_FORWARDED_FOR = 1.1.1.1',
-        ]);
+            ]
+        );
 
         $this->assertSame($expected, $string);
     }

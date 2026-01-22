@@ -15,7 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 class CheckboxGroupValueProviderTest extends TestCase
 {
-    /** @var DynamicListAttrRepository&MockObject */
+    /**
+     * @var DynamicListAttrRepository&MockObject 
+     */
     private DynamicListAttrRepository $repo;
 
     private CheckboxGroupValueProvider $subject;

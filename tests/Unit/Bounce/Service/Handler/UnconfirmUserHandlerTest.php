@@ -47,12 +47,14 @@ class UnconfirmUserHandlerTest extends TestCase
             $this->stringContains('bounce rule 9')
         );
 
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'userId' => 123,
             'confirmed' => true,
             'ruleId' => 9,
-        ]);
+            ]
+        );
     }
 
     public function testHandleDoesNothingWhenNotConfirmedOrNoSubscriber(): void
@@ -62,18 +64,22 @@ class UnconfirmUserHandlerTest extends TestCase
         $this->historyManager->expects($this->never())->method('addHistory');
 
         // Not confirmed
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'subscriber' => $subscriber,
             'userId' => 44,
             'confirmed' => false,
             'ruleId' => 1,
-        ]);
+            ]
+        );
 
         // No subscriber
-        $this->handler->handle([
+        $this->handler->handle(
+            [
             'userId' => 44,
             'confirmed' => true,
             'ruleId' => 1,
-        ]);
+            ]
+        );
     }
 }
