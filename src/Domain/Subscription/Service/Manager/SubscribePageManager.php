@@ -31,7 +31,10 @@ class SubscribePageManager
         }
 
         if ($this->subscribePageConfigMigrationEnabled) {
-            $this->configMigrationService->copyToPageData($page);
+            $changed = $this->configMigrationService->copyToPageData($page);
+            if ($changed) {
+                $page = $this->pageRepository->findPageWithData($id) ?? $page;
+            }
         }
 
         return $page;

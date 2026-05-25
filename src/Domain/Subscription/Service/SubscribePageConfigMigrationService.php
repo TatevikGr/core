@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpList\Core\Domain\Subscription\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
+use PhpList\Core\Domain\Configuration\Model\Config;
 use PhpList\Core\Domain\Configuration\Repository\ConfigRepository;
 use PhpList\Core\Domain\Subscription\Model\SubscribePage;
 use PhpList\Core\Domain\Subscription\Model\SubscribePageData;
@@ -14,22 +16,24 @@ class SubscribePageConfigMigrationService
     public function __construct(
         private readonly ConfigRepository $configRepository,
         private readonly SubscriberPageDataRepository $pageDataRepository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
     private const SUBSCRIBE_PAGE_SUFFIXES = [
         'subscribemessage',
         'subscribesubject',
-        'confirmmessage',
-        'confirmsubject',
+        'confirmationsubject',
         'confirmationmessage',
+        'unsubscribesubject',
+        'unsubscribemessage',
     ];
 
-    public function copyToPageData(SubscribePage $page): void
+    public function copyToPageData(SubscribePage $page): bool
     {
         $pageId = $page->getId();
         if ($pageId === null) {
-            return;
+            return false;
         }
 
         $configValues = [];
@@ -42,18 +46,24 @@ class SubscribePageConfigMigrationService
         }
 
         if ($configValues === []) {
-            return;
+            return false;
         }
 
         $existingData = $this->pageDataRepository->getByPage($page);
-        $existingNames = [];
+        $existingDataByName = [];
         foreach ($existingData as $pageData) {
-            $existingNames[$pageData->getName()] = true;
+            $existingDataByName[$pageData->getName()] = $pageData;
         }
 
         $updatedData = $existingData;
+        $hasChanges = false;
         foreach ($configValues as $name => $value) {
-            if (isset($existingNames[$name])) {
+            if (isset($existingDataByName[$name])) {
+                $existingPageData = $existingDataByName[$name];
+                if ($existingPageData->getData() !== $value) {
+                    $existingPageData->setData($value);
+                    $hasChanges = true;
+                }
                 continue;
             }
 
@@ -64,12 +74,47 @@ class SubscribePageConfigMigrationService
 
             $this->pageDataRepository->persist($newPageData);
             $updatedData[] = $newPageData;
+            $hasChanges = true;
         }
 
         $page->setData($updatedData);
+
+        if ($hasChanges) {
+            $this->entityManager->flush();
+        }
+
+        return $hasChanges;
     }
 
     public function copyToConfig(SubscribePage $page, array $data): void
     {
+        $pageId = $page->getId();
+        if ($pageId === null) {
+            return;
+        }
+
+        foreach (self::SUBSCRIBE_PAGE_SUFFIXES as $suffix) {
+            if (!array_key_exists($suffix, $data)) {
+                continue;
+            }
+
+            $value = $data[$suffix];
+            if (!is_string($value) && $value !== null) {
+                continue;
+            }
+
+            $configKey = $suffix . ':' . $pageId;
+            $config = $this->configRepository->findOneBy(['key' => $configKey]);
+            if (!$config instanceof Config) {
+                $config = (new Config())
+                    ->setKey($configKey)
+                    ->setValue($value);
+
+                $this->configRepository->persist($config);
+                continue;
+            }
+
+            $config->setValue($value);
+        }
     }
 }

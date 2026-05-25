@@ -44,7 +44,7 @@ class SubscribePageManagerTest extends TestCase
         );
     }
 
-    public function testFindPageReturnsPageFromRepository(): void
+    public function testFindPageReturnsPageFromRepositoryWithoutRefetchWhenMigrationMakesNoChanges(): void
     {
         $page = new SubscribePage();
 
@@ -57,9 +57,30 @@ class SubscribePageManagerTest extends TestCase
         $this->configMigrationService
             ->expects($this->once())
             ->method('copyToPageData')
-            ->with($page);
+            ->with($page)
+            ->willReturn(false);
 
         $this->assertSame($page, $this->manager->findPage(123));
+    }
+
+    public function testFindPageRefetchesWhenMigrationChangesPageData(): void
+    {
+        $page = new SubscribePage();
+        $refetchedPage = new SubscribePage();
+
+        $this->pageRepository
+            ->expects($this->exactly(2))
+            ->method('findPageWithData')
+            ->withConsecutive([123], [123])
+            ->willReturnOnConsecutiveCalls($page, $refetchedPage);
+
+        $this->configMigrationService
+            ->expects($this->once())
+            ->method('copyToPageData')
+            ->with($page)
+            ->willReturn(true);
+
+        $this->assertSame($refetchedPage, $this->manager->findPage(123));
     }
 
     public function testFindPageReturnsNullWhenMissing(): void
@@ -205,6 +226,50 @@ class SubscribePageManagerTest extends TestCase
         ];
 
         $this->manager->syncPageData($data, $page);
+    }
+
+    public function testSyncPageDataCallsCopyToConfigWhenFeatureIsEnabled(): void
+    {
+        $page = $this->getMockBuilder(SubscribePage::class)
+            ->onlyMethods(['getId'])
+            ->getMock();
+        $page->method('getId')->willReturn(15);
+        $data = ['subscribemessage' => 'updated'];
+
+        $this->pageDataRepository
+            ->expects($this->once())
+            ->method('getByPage')
+            ->with($page)
+            ->willReturn([]);
+
+        $this->configMigrationService
+            ->expects($this->once())
+            ->method('copyToConfig')
+            ->with(page: $page, data: $data);
+
+        $this->manager->syncPageData($data, $page);
+    }
+
+    public function testSyncPageDataSkipsCopyToConfigWhenFeatureIsDisabled(): void
+    {
+        $manager = $this->createManager(false);
+        $page = $this->getMockBuilder(SubscribePage::class)
+            ->onlyMethods(['getId'])
+            ->getMock();
+        $page->method('getId')->willReturn(16);
+        $data = ['subscribemessage' => 'updated'];
+
+        $this->pageDataRepository
+            ->expects($this->once())
+            ->method('getByPage')
+            ->with($page)
+            ->willReturn([]);
+
+        $this->configMigrationService
+            ->expects($this->never())
+            ->method('copyToConfig');
+
+        $manager->syncPageData($data, $page);
     }
 
     public function testSyncPageDataUpdatesExistingEntries(): void
