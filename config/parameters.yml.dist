@@ -37,6 +37,8 @@ parameters:
     env(REST_API_BASE_URL): 'http://api.phplist.local/api/v2'
     app.frontend_base_url: '%%env(FRONT_END_BASE_URL)%%'
     env(FRONT_END_BASE_URL): 'http://frontend.phplist.local'
+    subscription.subscribe_page_config_migration_enabled: '%%env(bool:PARAREL_USE_WITH_PHPLIST3)%%'
+    env(PARAREL_USE_WITH_PHPLIST3): '0'
 
     # Email configuration
     app.mailer_from: '%%env(MAILER_FROM)%%'

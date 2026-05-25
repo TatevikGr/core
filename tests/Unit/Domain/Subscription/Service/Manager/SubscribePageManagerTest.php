@@ -11,6 +11,7 @@ use PhpList\Core\Domain\Subscription\Model\SubscribePageData;
 use PhpList\Core\Domain\Subscription\Repository\SubscriberPageDataRepository;
 use PhpList\Core\Domain\Subscription\Repository\SubscriberPageRepository;
 use PhpList\Core\Domain\Subscription\Service\Manager\SubscribePageManager;
+use PhpList\Core\Domain\Subscription\Service\SubscribePageConfigMigrationService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -18,6 +19,7 @@ class SubscribePageManagerTest extends TestCase
 {
     private SubscriberPageRepository|MockObject $pageRepository;
     private SubscriberPageDataRepository|MockObject $pageDataRepository;
+    private SubscribePageConfigMigrationService|MockObject $configMigrationService;
     private EntityManagerInterface|MockObject $entityManager;
     private SubscribePageManager $manager;
 
@@ -25,12 +27,20 @@ class SubscribePageManagerTest extends TestCase
     {
         $this->pageRepository = $this->createMock(SubscriberPageRepository::class);
         $this->pageDataRepository = $this->createMock(SubscriberPageDataRepository::class);
+        $this->configMigrationService = $this->createMock(SubscribePageConfigMigrationService::class);
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
 
-        $this->manager = new SubscribePageManager(
+        $this->manager = $this->createManager(true);
+    }
+
+    private function createManager(bool $subscribePageConfigMigrationEnabled): SubscribePageManager
+    {
+        return new SubscribePageManager(
             pageRepository: $this->pageRepository,
             pageDataRepository: $this->pageDataRepository,
+            configMigrationService: $this->configMigrationService,
             entityManager: $this->entityManager,
+            subscribePageConfigMigrationEnabled: $subscribePageConfigMigrationEnabled,
         );
     }
 
@@ -44,7 +54,45 @@ class SubscribePageManagerTest extends TestCase
             ->with(123)
             ->willReturn($page);
 
+        $this->configMigrationService
+            ->expects($this->once())
+            ->method('copyToPageData')
+            ->with($page);
+
         $this->assertSame($page, $this->manager->findPage(123));
+    }
+
+    public function testFindPageReturnsNullWhenMissing(): void
+    {
+        $this->pageRepository
+            ->expects($this->once())
+            ->method('findPageWithData')
+            ->with(123)
+            ->willReturn(null);
+
+        $this->configMigrationService
+            ->expects($this->never())
+            ->method('copyToPageData');
+
+        $this->assertNull($this->manager->findPage(123));
+    }
+
+    public function testFindPageSkipsConfigMigrationWhenFeatureIsDisabled(): void
+    {
+        $manager = $this->createManager(false);
+        $page = new SubscribePage();
+
+        $this->pageRepository
+            ->expects($this->once())
+            ->method('findPageWithData')
+            ->with(123)
+            ->willReturn($page);
+
+        $this->configMigrationService
+            ->expects($this->never())
+            ->method('copyToPageData');
+
+        $this->assertSame($page, $manager->findPage(123));
     }
 
     public function testCreatePageCreatesAndSaves(): void
